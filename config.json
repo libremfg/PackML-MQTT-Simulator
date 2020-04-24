@@ -1,0 +1,38 @@
+{
+    "status": {
+        "machSpeed": 100.0,
+        "curMachSpeed": 0.0,
+        "parameter": [],
+        "product": []
+    },
+    "admin": {
+        "machDesignSpeed": 100.0,
+        "prodConsumedCount": [
+            {
+                "id": 1,
+                "name": "Consumed Material",
+                "unit": "Count",
+                "count": 0,
+                "accCount": 0
+            }
+        ],
+        "prodProcessedCount": [
+            {
+                "id": 2,
+                "name": "Processed Material",
+                "unit": "Count",
+                "count": 0,
+                "accCount": 0
+            }
+        ],
+        "prodDefectiveCount": [
+            {
+                "id": 3,
+                "name": "Defective Material",
+                "unit": "Count",
+                "count": 0,
+                "accCount": 0
+            }
+        ]
+    }
+}
