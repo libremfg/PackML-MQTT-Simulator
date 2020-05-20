@@ -1,40 +1,42 @@
-// Constants
-const site = process.env.SITE || "Site";
-const area = process.env.AREA || "Area";
-const line = process.env.LINE || "Line";
-const startOnLoad = process.env.START || true;
-const MQTT_URL = process.env.MQTT_URL || "mqtt://broker.hivemq.com";
-const MQTT_USERNAME = process.env.MQTT_USERNAME || "";
-const MQTT_PASSWORD = process.env.MQTT_PASSWORD || "";
-const topicPrefix = `${site}/${area}/${line}`
-
 // Imports
 var StateMachine = require('javascript-state-machine');
 var mqtt = require('mqtt');
 var seedrandom = require('seedrandom');
 var helper = require('./helper')
+
+// Instance configufation overloaded with environmental variables
+const site = process.env.SITE || "Site";
+const area = process.env.AREA || "Area";
+const line = process.env.LINE || "Line";
+const startOnLoad = process.env.START || false;
+const MQTT_URL = process.env.MQTT_URL || "mqtt://broker.hivemq.com";
+const MQTT_USERNAME = process.env.MQTT_USERNAME || "";
+const MQTT_PASSWORD = process.env.MQTT_PASSWORD || "";
+
+// Initialize _random_ with site, area and line to have consistent results with the same machine.
+const topicPrefix = `${site}/${area}/${line}`
 seedrandom(topicPrefix, {global: true});
 
-// Variables
-const setupTime = Math.round(helper.randomBoxMuller() * 30);
-const rampTime = helper.randomBoxMuller() * 5;
-var mqttClient  = mqtt.connect(MQTT_URL, {username: MQTT_USERNAME, password: MQTT_PASSWORD});
+// Initialize PackML Model
+var packML = require("./config.json")
 var UnitMode = null;
 var State = null;
-var startingTime = Math.round(helper.randomBoxMuller() * 10000);
-var stoppingTime = Math.round(helper.randomBoxMuller() * 10000);
-
-var packML = require("./config.json")
 
 // Set Chances for this machine
+const setupTime = Math.round(helper.randomBoxMuller() * 30);
+const rampTime = helper.randomBoxMuller() * 5;
 const executeAvailabilityProbabilities = {"nothing": 0.9985, "suspend": 0.0015};
 let good = 0.9 + helper.randomBoxMuller() * 0.1 ; 
 const executeQualityProbabilities = {"good":good, "bad": 1.0 - good};
 const executeUnspendProbabilities = {"nothing": 0.995, "unsuspend": 0.005};
-
 const isCurMachSpeedFlicker = {"flick":0.2, "nothing":0.8};
+var startingTime = Math.round(helper.randomBoxMuller() * 10000);
+var stoppingTime = Math.round(helper.randomBoxMuller() * 10000);
 
-var startedOnce = false;
+var startedOnceFlag = false;
+
+// Connect via mqtt
+var mqttClient  = mqtt.connect(MQTT_URL, {username: MQTT_USERNAME, password: MQTT_PASSWORD});
 
 function stateChangeTime() {
     return Math.round(Math.random() * 10000);
@@ -445,7 +447,6 @@ function sendValuesOnStart(){
         mqttClient.publish(`${topicPrefix}/Admin/ProdDefectiveCount/0/ID`, packML.admin.prodDefectiveCount[0].id.toString(), {retain: true})
         mqttClient.publish(`${topicPrefix}/Admin/ProdDefectiveCount/0/Name`, packML.admin.prodDefectiveCount[0].name, {retain: true})
         mqttClient.publish(`${topicPrefix}/Admin/ProdDefectiveCount/0/Unit`, packML.admin.prodDefectiveCount[0].unit, {retain: true})
-
         mqttClient.publish(`${topicPrefix}/Admin/ProdProcessedCount/0/ID`, packML.admin.prodProcessedCount[0].id.toString(), {retain: true})
         mqttClient.publish(`${topicPrefix}/Admin/ProdProcessedCount/0/Name`, packML.admin.prodProcessedCount[0].name, {retain: true})
         mqttClient.publish(`${topicPrefix}/Admin/ProdProcessedCount/0/Unit`, packML.admin.prodProcessedCount[0].unit, {retain: true})
@@ -535,7 +536,7 @@ mqttClient.on('connect', (connack) => {
             },
             onEnterStopped: function(){
                 updateState();
-                if (!startedOnce && startOnLoad) {
+                if (!startedOnceFlag) {
                     setTimeout(()=>{State.reset();},2000);
                 }
             },
@@ -554,9 +555,9 @@ mqttClient.on('connect', (connack) => {
                 packML.admin.prodDefectiveCount.forEach((prodDefectiveCount) => {
                     prodDefectiveCount.count = 0.0;
                 });
-                if (!startedOnce && startOnLoad) {
+                if (startedOnceFlag === false && startOnLoad === true) {
+                    startedOnceFlag = true;
                     setTimeout(()=>{State.start();},2000);
-                    startedOnce = true;
                 }
             },
             onEnterStarting: function(){
@@ -606,14 +607,20 @@ mqttClient.on('connect', (connack) => {
         }
     });
 
-    UnitMode.production();
-    State.clear();
+    try {
+        UnitMode.production();
+        State.clear();
+    } catch (e) {
+        
+    }
 
     mqttClient.subscribe([
         `${topicPrefix}/Command/#`
     ]);
 });
 
+
+// Main Loop
 setInterval(()=> {
         if (State !== undefined && State !== null) {
             // Produced
