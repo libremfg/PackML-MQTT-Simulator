@@ -39,7 +39,7 @@ var startedOnceFlag = false;
 var mqttClient  = mqtt.connect(MQTT_URL, {username: MQTT_USERNAME, password: MQTT_PASSWORD});
 
 function stateChangeTime() {
-    return Math.round(Math.random() * 10000);
+    return Math.round(Math.random() * 10000)+1000;
 }
 
 mqttClient.on('message', (topic, message, packet) => {
