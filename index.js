@@ -536,7 +536,7 @@ mqttClient.on('connect', (connack) => {
             },
             onEnterStopped: function(){
                 updateState();
-                if (!startedOnceFlag) {
+                if (!startedOnceFlag && startOnLoad === true) {
                     setTimeout(()=>{State.reset();},2000);
                 }
             },
