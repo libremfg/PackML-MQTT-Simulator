@@ -1,8 +1,23 @@
 // Imports
+const winston = require('winston');
 var StateMachine = require('javascript-state-machine');
 var mqtt = require('mqtt');
 var seedrandom = require('seedrandom');
 var helper = require('./helper')
+
+// Logger
+const logger = winston.createLogger({
+    format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.printf(log => { return `${log.timestamp} | ${log.level}: ${log.message}`})
+    ),
+    transports: [
+        new winston.transports.Console({
+            'timestamp': true
+        })
+    ]
+});
+logger.info("Initializing");
 
 // Instance configufation overloaded with environmental variables
 const site = process.env.SITE || "Site";
@@ -157,7 +172,7 @@ mqttClient.on('message', (topic, message, packet) => {
                 }
                 break;
             default:
-                console.log("Not sure how to handle UnitMode command: " + message);
+                logger.info("Not sure how to handle UnitMode command: " + message);
         }
         mqttClient.publish(`${topicPrefix}/Status/UnitModeRequested`, false);
     } else if (topic === `${topicPrefix}/Command/MachSpeed`) {
@@ -421,19 +436,19 @@ mqttClient.on('message', (topic, message, packet) => {
             mqttClient.publish(`${topicPrefix}/Status/Product/${productIndex}/Ingredient/${ingredientIndex}/Parameter/${parameterIndex}/Value`, packML.status.product[productIndex].ingredient[ingredientIndex].Parameter[parameterIndex].Value.toString(), {retain: true});
         }
     } else {
-        console.log("No function associated with: " + topic);
+        logger.info("No function associated with: " + topic);
     }
 });
 
 function updateUnitMode(){
-    console.log("UnitMode: " + helper.titleCase(UnitMode.state))
+    logger.info("UnitMode: " + helper.titleCase(UnitMode.state))
     if (mqttClient.connected) {
         mqttClient.publish(`${topicPrefix}/Status/UnitMode`, helper.titleCase(UnitMode.state), {retain: true});
     }
 }
 
 function updateState(){
-    console.log("StateCurrent: " + helper.titleCase(State.state))
+    logger.info("StateCurrent: " + helper.titleCase(State.state))
     if (mqttClient.connected) {
         mqttClient.publish(`${topicPrefix}/Status/StateCurrent`, helper.titleCase(State.state), {retain: true});
     }
@@ -457,159 +472,167 @@ mqttClient.on('connect', (connack) => {
     
     mqttClient.publish(`${topicPrefix}/PLC`, 'Simulated');
 
-    UnitMode = new StateMachine({
-        init: 'undefined',
-        transitions: [
-            { name: 'production', from: 'manual', to: 'production'},
-            { name: 'production', from: 'maintenance', to: 'production'},
-            { name: 'manual', from: 'production', to: 'manual'},
-            { name: 'manual', from: 'maintenance', to: 'manual'},
-            { name: 'maintenance', from: 'production', to: 'maintenance'},
-            { name: 'maintenance', from: 'manual', to: 'maintenance'},
-            { name: 'production', from: 'undefined', to: 'production'}
-        ],
-        methods: {
-            onEnterProduction: function() { updateUnitMode() },
-            onEnterManual: function() { updateUnitMode() },
-            onEnterMaintenance: function() { updateUnitMode() },
-        }
-    });
+    if (UnitMode === null) {
+        UnitMode = new StateMachine({
+            init: 'undefined',
+            transitions: [
+                { name: 'production', from: 'manual', to: 'production'},
+                { name: 'production', from: 'maintenance', to: 'production'},
+                { name: 'manual', from: 'production', to: 'manual'},
+                { name: 'manual', from: 'maintenance', to: 'manual'},
+                { name: 'maintenance', from: 'production', to: 'maintenance'},
+                { name: 'maintenance', from: 'manual', to: 'maintenance'},
+                { name: 'production', from: 'undefined', to: 'production'}
+            ],
+            methods: {
+                onEnterProduction: function() { updateUnitMode() },
+                onEnterManual: function() { updateUnitMode() },
+                onEnterMaintenance: function() { updateUnitMode() },
+            }
+        });
+    }
     
-    State = new StateMachine({
-        init: 'undefined',
-        transitions: [
-            { name: 'reset', from: 'complete', to: 'resetting'},
-            { name: 'reset', from: 'stopped', to: 'resetting'},
-            { name: 'stop', from: 'resetting', to: 'stopping'},
-            { name: 'stop', from: 'idle', to: 'stopping'},
-            { name: 'stop', from: 'starting', to: 'stopping'},
-            { name: 'stop', from: 'execute', to: 'stopping'},
-            { name: 'stop', from: 'unholding', to: 'stopping'},
-            { name: 'stop', from: 'held', to: 'stopping'},
-            { name: 'stop', from: 'holding', to: 'stopping'},
-            { name: 'stop', from: 'unsuspending', to: 'stopping'},
-            { name: 'stop', from: 'suspending', to: 'stopping'},
-            { name: 'stop', from: 'suspended', to: 'stopping'},
-            { name: 'stop', from: 'completing', to: 'stopping'},
-            { name: 'stop', from: 'complete', to: 'stopping'},
-            { name: 'start', from: 'idle', to: 'starting'},
-            { name: 'hold', from: 'execute', to: 'holding'},
-            { name: 'unhold', from: 'held', to: 'unholding'},
-            { name: 'suspend', from: 'execute', to: 'suspending'},
-            { name: 'unsuspend', from: 'suspended', to: 'unsuspending'},
-            { name: 'abort', from: 'resetting', to: 'aborting'},
-            { name: 'abort', from: 'idle', to: 'aborting'},
-            { name: 'abort', from: 'starting', to: 'aborting'},
-            { name: 'abort', from: 'execute', to: 'aborting'},
-            { name: 'abort', from: 'unholding', to: 'aborting'},
-            { name: 'abort', from: 'held', to: 'aborting'},
-            { name: 'abort', from: 'holding', to: 'aborting'},
-            { name: 'abort', from: 'unsuspending', to: 'aborting'},
-            { name: 'abort', from: 'suspending', to: 'aborting'},
-            { name: 'abort', from: 'suspended', to: 'aborting'},
-            { name: 'abort', from: 'completing', to: 'aborting'},
-            { name: 'abort', from: 'complete', to: 'aborting'},
-            { name: 'clear', from: 'aborted', to: 'clearing'},
-            { name: 'clear', from: 'undefined', to: 'clearing'},
-            { name: 'sc', from: 'stopping', to: 'stopped'},
-            { name: 'sc', from: 'clearing', to: 'stopped'},
-            { name: 'sc', from: 'aborting', to: 'aborted'},
-            { name: 'sc', from: 'resetting', to: 'idle'},
-            { name: 'sc', from: 'starting', to: 'execute'},
-            { name: 'sc', from: 'holding', to: 'held'},
-            { name: 'sc', from: 'unholding', to: 'execute'},
-            { name: 'sc', from: 'suspending', to: 'suspended'},
-            { name: 'sc', from: 'unsuspending', to: 'execute'},
-            { name: 'sc', from: 'execute', to: 'completing'},
-            { name: 'sc', from: 'completing', to: 'complete'},
-            { name: 'goto', from: '*', to: function(s) { return s } }
-            
-        ],
-        methods: {
-            onEnterClearing: function(){
-                updateState();
-                setTimeout(()=>{State.sc()}, stateChangeTime());
-            },
-            onEnterStopping: function(){
-                updateState();
-                setTimeout(()=>{State.sc()}, stoppingTime)
-            },
-            onEnterStopped: function(){
-                updateState();
-                if (!startedOnceFlag && startOnLoad === true) {
-                    setTimeout(()=>{State.reset();},2000);
-                }
-            },
-            onEnterResetting: function(){
-                updateState();
-                setTimeout(()=>{State.sc()}, stateChangeTime())
-            },
-            onEnterIdle: function(){
-                updateState();
-                packML.admin.prodConsumedCount.forEach((prodConsumedCount) => {
-                    prodConsumedCount.count = 0.0;
-                });
-                packML.admin.prodProcessedCount.forEach((prodProcessedCount) => {
-                    prodProcessedCount.count = 0.0;
-                });
-                packML.admin.prodDefectiveCount.forEach((prodDefectiveCount) => {
-                    prodDefectiveCount.count = 0.0;
-                });
-                if (startedOnceFlag === false && startOnLoad === true) {
-                    startedOnceFlag = true;
-                    setTimeout(()=>{State.start();},2000);
-                }
-            },
-            onEnterStarting: function(){
-                updateState();
-                sendValuesOnStart();
-                setTimeout(()=>{State.sc()}, startingTime)
-            },
-            onEnterExecute: function(){
-                updateState();
-            },
-            onEnterHolding: function(){
-                updateState();
-                setTimeout(()=>{State.sc()}, stoppingTime)
-            },
-            onEnterHeld: function(){
-                updateState();
-            },
-            onEnterUnholding: function(){
-                updateState();
-                setTimeout(()=>{State.sc()}, startingTime)
-            },
-            onEnterSuspending: function(){
-                updateState();
-                setTimeout(()=>{State.sc()}, stoppingTime)
-            },
-            onEnterSuspended: function(){
-                updateState();
-            },
-            onEnterUnsuspending: function(){
-                updateState();
-                setTimeout(()=>{State.sc()}, startingTime)
-            },
-            onEnterCompleting: function(){
-                updateState();
-                setTimeout(()=>{State.sc()}, stoppingTime)
-            },
-            onEnterComplete: function(){
-                updateState();
-            },
-            onEnterAborting: function(){
-                updateState();
-                setTimeout(()=>{State.sc()}, stoppingTime)
-            },
-            onEnterAborted: function(){
-                updateState();
-            },
-        }
-    });
+    if (State === null) {
+        State = new StateMachine({
+            init: 'undefined',
+            transitions: [
+                { name: 'reset', from: 'complete', to: 'resetting'},
+                { name: 'reset', from: 'stopped', to: 'resetting'},
+                { name: 'stop', from: 'resetting', to: 'stopping'},
+                { name: 'stop', from: 'idle', to: 'stopping'},
+                { name: 'stop', from: 'starting', to: 'stopping'},
+                { name: 'stop', from: 'execute', to: 'stopping'},
+                { name: 'stop', from: 'unholding', to: 'stopping'},
+                { name: 'stop', from: 'held', to: 'stopping'},
+                { name: 'stop', from: 'holding', to: 'stopping'},
+                { name: 'stop', from: 'unsuspending', to: 'stopping'},
+                { name: 'stop', from: 'suspending', to: 'stopping'},
+                { name: 'stop', from: 'suspended', to: 'stopping'},
+                { name: 'stop', from: 'completing', to: 'stopping'},
+                { name: 'stop', from: 'complete', to: 'stopping'},
+                { name: 'start', from: 'idle', to: 'starting'},
+                { name: 'hold', from: 'execute', to: 'holding'},
+                { name: 'unhold', from: 'held', to: 'unholding'},
+                { name: 'suspend', from: 'execute', to: 'suspending'},
+                { name: 'unsuspend', from: 'suspended', to: 'unsuspending'},
+                { name: 'abort', from: 'resetting', to: 'aborting'},
+                { name: 'abort', from: 'idle', to: 'aborting'},
+                { name: 'abort', from: 'starting', to: 'aborting'},
+                { name: 'abort', from: 'execute', to: 'aborting'},
+                { name: 'abort', from: 'unholding', to: 'aborting'},
+                { name: 'abort', from: 'held', to: 'aborting'},
+                { name: 'abort', from: 'holding', to: 'aborting'},
+                { name: 'abort', from: 'unsuspending', to: 'aborting'},
+                { name: 'abort', from: 'suspending', to: 'aborting'},
+                { name: 'abort', from: 'suspended', to: 'aborting'},
+                { name: 'abort', from: 'completing', to: 'aborting'},
+                { name: 'abort', from: 'complete', to: 'aborting'},
+                { name: 'clear', from: 'aborted', to: 'clearing'},
+                { name: 'clear', from: 'undefined', to: 'clearing'},
+                { name: 'sc', from: 'stopping', to: 'stopped'},
+                { name: 'sc', from: 'clearing', to: 'stopped'},
+                { name: 'sc', from: 'aborting', to: 'aborted'},
+                { name: 'sc', from: 'resetting', to: 'idle'},
+                { name: 'sc', from: 'starting', to: 'execute'},
+                { name: 'sc', from: 'holding', to: 'held'},
+                { name: 'sc', from: 'unholding', to: 'execute'},
+                { name: 'sc', from: 'suspending', to: 'suspended'},
+                { name: 'sc', from: 'unsuspending', to: 'execute'},
+                { name: 'sc', from: 'execute', to: 'completing'},
+                { name: 'sc', from: 'completing', to: 'complete'},
+                { name: 'goto', from: '*', to: function(s) { return s } }
+                
+            ],
+            methods: {
+                onEnterClearing: function(){
+                    updateState();
+                    setTimeout(()=>{State.sc()}, stateChangeTime());
+                },
+                onEnterStopping: function(){
+                    updateState();
+                    setTimeout(()=>{State.sc()}, stoppingTime)
+                },
+                onEnterStopped: function(){
+                    updateState();
+                    if (!startedOnceFlag && startOnLoad === true) {
+                        setTimeout(()=>{State.reset();},2000);
+                    }
+                },
+                onEnterResetting: function(){
+                    updateState();
+                    setTimeout(()=>{State.sc()}, stateChangeTime())
+                },
+                onEnterIdle: function(){
+                    updateState();
+                    packML.admin.prodConsumedCount.forEach((prodConsumedCount) => {
+                        prodConsumedCount.count = 0.0;
+                    });
+                    packML.admin.prodProcessedCount.forEach((prodProcessedCount) => {
+                        prodProcessedCount.count = 0.0;
+                    });
+                    packML.admin.prodDefectiveCount.forEach((prodDefectiveCount) => {
+                        prodDefectiveCount.count = 0.0;
+                    });
+                    if (startedOnceFlag === false && startOnLoad === true) {
+                        startedOnceFlag = true;
+                        setTimeout(()=>{State.start();},2000);
+                    }
+                },
+                onEnterStarting: function(){
+                    updateState();
+                    sendValuesOnStart();
+                    setTimeout(()=>{State.sc()}, startingTime)
+                },
+                onEnterExecute: function(){
+                    updateState();
+                },
+                onEnterHolding: function(){
+                    updateState();
+                    setTimeout(()=>{State.sc()}, stoppingTime)
+                },
+                onEnterHeld: function(){
+                    updateState();
+                },
+                onEnterUnholding: function(){
+                    updateState();
+                    setTimeout(()=>{State.sc()}, startingTime)
+                },
+                onEnterSuspending: function(){
+                    updateState();
+                    setTimeout(()=>{State.sc()}, stoppingTime)
+                },
+                onEnterSuspended: function(){
+                    updateState();
+                },
+                onEnterUnsuspending: function(){
+                    updateState();
+                    setTimeout(()=>{State.sc()}, startingTime)
+                },
+                onEnterCompleting: function(){
+                    updateState();
+                    setTimeout(()=>{State.sc()}, stoppingTime)
+                },
+                onEnterComplete: function(){
+                    updateState();
+                },
+                onEnterAborting: function(){
+                    updateState();
+                    setTimeout(()=>{State.sc()}, stoppingTime)
+                },
+                onEnterAborted: function(){
+                    updateState();
+                },
+            }
+        });
+    }
 
     try {
-        UnitMode.production();
-        State.clear();
+        if (UnitMode !== null && UnitMode.state === 'undefined'){
+            UnitMode.production();
+        }
+        if (State !== null && State.state === 'undefined') {
+            State.clear();
+        }
     } catch (e) {
         
     }
@@ -618,7 +641,6 @@ mqttClient.on('connect', (connack) => {
         `${topicPrefix}/Command/#`
     ]);
 });
-
 
 // Main Loop
 setInterval(()=> {
