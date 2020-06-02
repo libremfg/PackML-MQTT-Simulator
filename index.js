@@ -692,7 +692,7 @@ setInterval(()=> {
                     packML.status.curMachSpeed = packML.status.machSpeed;
                 }
                 mqttClient.publish(`${topicPrefix}/Status/CurMachSpeed`, packML.status.curMachSpeed.toString(), {retain: true});
-            } else if (State.state === 'completeing' || State.state === 'stopping' || State.state === 'aborting' || State.state === 'holding' || State.state === 'suspending') {
+            } else if (State.state === 'completing' || State.state === 'stopping' || State.state === 'aborting' || State.state === 'holding' || State.state === 'suspending') {
                 // Ramp Down Speed
                 packML.status.curMachSpeed = packML.status.curMachSpeed - (packML.status.machSpeed * 1.0 / (stoppingTime/1000.0))
                 if (packML.status.curMachSpeed < 0.0) {
