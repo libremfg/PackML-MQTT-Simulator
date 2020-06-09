@@ -96,7 +96,7 @@ mqttClient.on('message', (topic, message, packet) => {
             try {
                 State.sc();
             } catch (e) {
-                return;
+                logger.error("Complete Command Received, failed to change state")
             }
         }
     } else if (topic ===  `${topicPrefix}/Command/Stop`) {
@@ -105,7 +105,7 @@ mqttClient.on('message', (topic, message, packet) => {
             try {
                 State.stop();
             } catch (e) {
-                return;
+                logger.error("Stop Command Received, failed to change state")
             }
         }
     } else if (topic === `${topicPrefix}/Command/Abort`){
@@ -114,7 +114,7 @@ mqttClient.on('message', (topic, message, packet) => {
             try {
                 State.abort();
             } catch (e) {
-                return;
+                logger.error("Abort Command Received, failed to change state")
             }
         }
     } else if (topic === `${topicPrefix}/Command/Clear`){
@@ -123,7 +123,7 @@ mqttClient.on('message', (topic, message, packet) => {
             try {
                 State.clear();
             } catch (e) {
-                return;
+                logger.error("Clear Command Received, failed to change state")
             }
         }
     } else if (topic === `${topicPrefix}/Command/Hold`) {
@@ -132,7 +132,7 @@ mqttClient.on('message', (topic, message, packet) => {
             try {
                 State.hold();
             } catch (e) {
-                return;
+                logger.error("Hold Command Received, failed to change state")
             }
         }
     } else if (topic === `${topicPrefix}/Command/Unhold`) {
@@ -141,7 +141,7 @@ mqttClient.on('message', (topic, message, packet) => {
             try {
                 State.unhold();
             } catch (e) {
-                return;
+                logger.error("Unhold Command Received, failed to change state")
             }
         }
     } else if (topic === `${topicPrefix}/Command/UnitMode`) {
@@ -546,11 +546,23 @@ mqttClient.on('connect', (connack) => {
             methods: {
                 onEnterClearing: function(){
                     updateState();
-                    setTimeout(()=>{State.sc()}, stateChangeTime());
+                    setTimeout(()=>{
+                        try {
+                            State.sc();
+                        } catch(e) {
+                            logger.error("Failed to sc, onEnterClearing")
+                        }
+                    }, stateChangeTime());
                 },
                 onEnterStopping: function(){
                     updateState();
-                    setTimeout(()=>{State.sc()}, stoppingTime)
+                    setTimeout(()=>{
+                        try {
+                            State.sc();
+                        } catch(e) {
+                            logger.error("Failed to sc, onEnterStopping")
+                        }
+                    }, stoppingTime)
                 },
                 onEnterStopped: function(){
                     updateState();
@@ -560,7 +572,13 @@ mqttClient.on('connect', (connack) => {
                 },
                 onEnterResetting: function(){
                     updateState();
-                    setTimeout(()=>{State.sc()}, stateChangeTime())
+                    setTimeout(()=>{
+                        try {
+                            State.sc();
+                        } catch(e) {
+                            logger.error("Failed to sc, onEnterResetting")
+                        }
+                    }, stateChangeTime())
                 },
                 onEnterIdle: function(){
                     updateState();
@@ -581,43 +599,85 @@ mqttClient.on('connect', (connack) => {
                 onEnterStarting: function(){
                     updateState();
                     sendValuesOnStart();
-                    setTimeout(()=>{State.sc()}, startingTime)
+                    setTimeout(()=>{
+                        try {
+                            State.sc();
+                        } catch(e) {
+                            logger.error("Failed to sc, onEnterStarting")
+                        }
+                    }, startingTime)
                 },
                 onEnterExecute: function(){
                     updateState();
                 },
                 onEnterHolding: function(){
                     updateState();
-                    setTimeout(()=>{State.sc()}, stoppingTime)
+                    setTimeout(()=>{
+                        try {
+                            State.sc();
+                        } catch(e) {
+                            logger.error("Failed to sc, onEnterHolding")
+                        }
+                    }, stoppingTime)
                 },
                 onEnterHeld: function(){
                     updateState();
                 },
                 onEnterUnholding: function(){
                     updateState();
-                    setTimeout(()=>{State.sc()}, startingTime)
+                    setTimeout(()=>{
+                        try {
+                            State.sc();
+                        } catch(e) {
+                            logger.error("Failed to sc, onEnterUnholding")
+                        }
+                    }, startingTime)
                 },
                 onEnterSuspending: function(){
                     updateState();
-                    setTimeout(()=>{State.sc()}, stoppingTime)
+                    setTimeout(()=>{
+                        try {
+                            State.sc();
+                        } catch(e) {
+                            logger.error("Failed to sc, onEnterSuspending")
+                        }
+                    }, stoppingTime)
                 },
                 onEnterSuspended: function(){
                     updateState();
                 },
                 onEnterUnsuspending: function(){
                     updateState();
-                    setTimeout(()=>{State.sc()}, startingTime)
+                    setTimeout(()=>{
+                        try {
+                            State.sc();
+                        } catch(e) {
+                            logger.error("Failed to sc, onEnterUnsuspending")
+                        }
+                    }, startingTime)
                 },
                 onEnterCompleting: function(){
                     updateState();
-                    setTimeout(()=>{State.sc()}, stoppingTime)
+                    setTimeout(()=>{
+                        try {
+                            State.sc();
+                        } catch(e) {
+                            logger.error("Failed to sc, onEnterCompleting")
+                        }
+                    }, stoppingTime)
                 },
                 onEnterComplete: function(){
                     updateState();
                 },
                 onEnterAborting: function(){
                     updateState();
-                    setTimeout(()=>{State.sc()}, stoppingTime)
+                    setTimeout(()=>{
+                        try {
+                            State.sc();
+                        } catch(e) {
+                            logger.error("Failed to sc, onEnterAborting")
+                        }
+                    }, stoppingTime)
                 },
                 onEnterAborted: function(){
                     updateState();

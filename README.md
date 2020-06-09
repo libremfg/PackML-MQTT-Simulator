@@ -93,6 +93,8 @@ services:
 
 ## Changelog
 
+  - 0.0.2
+    - Fixes #1 Add sc state change handling
   - 0.0.1
     - Add winston logging
   - 0.0.0
