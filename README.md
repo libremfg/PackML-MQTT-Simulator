@@ -36,6 +36,17 @@ $ node ./src/index.js
 2020-06-22T03:13:49.819Z | info: Site/Area/Line/Status/UnitModeCurrent : Production
 ```
 
+### Publish Commands
+
+Please allow some time in between commands to enable the machine to get to the Idle state before issuing the Start command.
+
+```shell
+$ docker run --init -it --rm efrecon/mqtt-client pub -h broker.hivemq.com -u USERNAME -P PASSWORD -t "Site/Area/Line/Command/Reset" -m 0
+
+$ docker run --init -it --rm efrecon/mqtt-client pub -h broker.hivemq.com -u USERNAME -P PASSWORD -t "Site/Area/Line/Command/Start" -m 0
+
+```
+
 ## Simulation
 
 The simulation consists of
