@@ -1,0 +1,39 @@
+{
+  "name": "packaging-machine-language-mqtt-simulator",
+  "version": "1.0.0",
+  "description": "Manufacturing line simulator interfaced using PackML over MQTT.",
+  "keywords": [
+    "packml",
+    "mqtt",
+    "simulation",
+    "manufacturing"
+  ],
+  "homepage": "https://github.com/Spruik/PackML-MQTT-Simluator#readme",
+  "bugs": {
+    "url": "https://github.com/Spruik/PackML-MQTT-Simluator/issues",
+    "email": "info@spruiktec.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Spruik/PackML-MQTT-Simluator"
+  },
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "style": "standard",
+    "quality": "sonar-scanner",
+    "build": "docker build . -t spruiktec/packml-simulator"
+  },
+  "author": "Spruik Technologies",
+  "license": "MIT",
+  "dependencies": {
+    "javascript-state-machine": "^3.1.0",
+    "mqtt": "^3.0.0",
+    "seedrandom": "^3.0.5",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "sonarqube-scanner": "^2.6.0",
+    "standard": "^14.3.4"
+  }
+}
