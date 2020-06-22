@@ -205,7 +205,7 @@ services:
 
 For any issue, there are fundamentally three ways an individual can contribute:
 
-- By opening the issue for discussion: For instance, if you believe that you have uncovered a bug in, creating a new issue in the ![GitHub issue tracker](./issues) is the way to report it.
+- By opening the issue for discussion: For instance, if you believe that you have uncovered a bug in, creating a new issue in the ![GitHub issue tracker](https://github.com/Spruik/PackML-MQTT-Simluator/issues) is the way to report it.
 - By helping to triage the issue: This can be done either by providing supporting details (a test case that demonstrates a bug), or providing suggestions on how to address the issue.
 - By helping to resolve the issue: Typically, this is done either in the form of demonstrating that the issue reported is not a problem after all, or more often, by opening a Pull Request that changes some bit of something in the simulator in a concrete and reviewable manner.
 
