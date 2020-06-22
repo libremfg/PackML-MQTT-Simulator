@@ -1,0 +1,11 @@
+# Ignore everything
+**
+
+# Allow files and directories
+!/package.json
+!/Dockerfile
+!/LICENSE
+!/MAINTAINERS
+!/README.md
+!/src/**
+!/docs/**
