@@ -2,11 +2,9 @@
 
 | Manufacturing line simulator interfaced using PackML over MQTT.
 
-PackML MQTT Simulator is a virtual line that interfaces using PackML implemented over MQTT. For use with the development of Industry 4.0 software solutions. The simulator implements the following PackML State model:
+PackML MQTT Simulator is a virtual line that interfaces using PackML implemented over MQTT. For use with the development of Industry 4.0 software solutions. The simulator implements the following PackML State model below and communicates over MQTT using `<SITE>/<AREA>/<LINE>/*` topics as defined by environmental variables.
 
 ![PackML State Model](./docs/PackML-StateModel.png)
-
-and communicates over MQTT using `<SITE>/<AREA>/<LINE>/*` topics as defined by environmental variables.
 
 ## Getting Started
 
@@ -205,7 +203,7 @@ services:
 
 For any issue, there are fundamentally three ways an individual can contribute:
 
-- By opening the issue for discussion: For instance, if you believe that you have uncovered a bug in, creating a new issue in the ![GitHub issue tracker](https://github.com/Spruik/PackML-MQTT-Simluator/issues) is the way to report it.
+- By opening the issue for discussion: For instance, if you believe that you have uncovered a bug in, creating a new issue in the [GitHub issue tracker](https://github.com/Spruik/PackML-MQTT-Simluator/issues) is the way to report it.
 - By helping to triage the issue: This can be done either by providing supporting details (a test case that demonstrates a bug), or providing suggestions on how to address the issue.
 - By helping to resolve the issue: Typically, this is done either in the form of demonstrating that the issue reported is not a problem after all, or more often, by opening a Pull Request that changes some bit of something in the simulator in a concrete and reviewable manner.
 

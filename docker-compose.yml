@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+  greenville-packaging-line1:
+    image: spruiktec/packml-simulator
+    environment:
+      SITE: Greenville
+      AREA: Packaging
+      LINE: 'Line 1'
+      
+  greenville-packaging-line1:
+    image: spruiktec/packml-simulator
+    environment:
+      SITE: Greenville
+      AREA: Packaging
+      LINE: 'Line 2'
