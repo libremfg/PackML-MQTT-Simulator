@@ -1,5 +1,13 @@
 name: Publish Docker
-on: [push]
+on:
+  # Trigger the workflow on push request,
+  # but only for the master branch
+  push:
+    branches:
+      - master
+  release:
+    # Only use the types keyword to narrow down the activity types that will trigger your workflow.
+    types: [published, created, edited]
 jobs:
   build:
     runs-on: ubuntu-latest
