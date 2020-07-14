@@ -53,7 +53,6 @@ var mode = new packmlModel.UnitMode()
 // Publish PackML Tags on Change
 var changed = (a, b, c) => {
   if (a == null || b == null || c == null) {
-    console.log('huh')
     throw Error('Should change null')
   }
   // Special Overloads
