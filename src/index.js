@@ -53,7 +53,6 @@ var mode = new packmlModel.UnitMode()
 // Publish PackML Tags on Change
 var changed = (a, b, c) => {
   if (a == null || b == null || c == null) {
-    console.log('huh')
     throw Error('Should change null')
   }
   // Special Overloads
@@ -107,7 +106,9 @@ tags.admin.prodDefectiveCount.push(
 
 mqttClient.on('connect', (connack) => {
   logger.info('Connected to ' + global.config.MQTT_URL)
-  mqttClient.subscribe(`${topicPrefix}/Command/#`)
+  if (!connack.sessionPresent) {
+    mqttClient.subscribe(`${topicPrefix}/Command/#`)
+  }
   state.observe('onEnterState', (lifecycle) => {
     const stateCurrent = helper.titleCase(lifecycle.to)
     logger.debug(`Entering State ${stateCurrent}`)
