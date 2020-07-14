@@ -1,6 +1,6 @@
 # Manufacturing Line PackML MQTT Simulator
 
-| Manufacturing line simulator interfaced using PackML over MQTT.
+> Manufacturing line simulator interfaced using PackML over MQTT.
 
 PackML MQTT Simulator is a virtual line that interfaces using PackML implemented over MQTT. For use with the development of Industry 4.0 software solutions. The simulator implements the following PackML State model below and communicates over MQTT using `<SITE>/<AREA>/<LINE>/*` topics as defined by environmental variables.
 
@@ -190,7 +190,7 @@ services:
       SITE: Greenville
       AREA: Packaging
       LINE: 'Line 1'
-  greenville-packaging-line1:
+  greenville-packaging-line2:
     image: spruiktec/packml-simulator
     environment:
       SITE: Greenville
@@ -208,5 +208,13 @@ For any issue, there are fundamentally three ways an individual can contribute:
 - By helping to resolve the issue: Typically, this is done either in the form of demonstrating that the issue reported is not a problem after all, or more often, by opening a Pull Request that changes some bit of something in the simulator in a concrete and reviewable manner.
 
 ## Changelog
+
+- 1.0.1 Update docs
+  - Bump npm library versions
+  - Fix README subtitle markdown
+  - Fix image of state model
+  - Check for previous subscription before subscribe
+  - Fix docker-compose example
+  - Remove console.log
 
 - 1.0.0. Initial Release
