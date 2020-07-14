@@ -209,4 +209,12 @@ For any issue, there are fundamentally three ways an individual can contribute:
 
 ## Changelog
 
+- 1.0.1 Update docs
+  - Bump npm library versions
+  - Fix README subtitle markdown
+  - Fix image of state model
+  - Check for previous subscription before subscribe
+  - Fix docker-compose example
+  - Remove console.log
+
 - 1.0.0. Initial Release
