@@ -106,7 +106,9 @@ tags.admin.prodDefectiveCount.push(
 
 mqttClient.on('connect', (connack) => {
   logger.info('Connected to ' + global.config.MQTT_URL)
-  mqttClient.subscribe(`${topicPrefix}/Command/#`)
+  if (!connack.sessionPresent) {
+    mqttClient.subscribe(`${topicPrefix}/Command/#`)
+  }
   state.observe('onEnterState', (lifecycle) => {
     const stateCurrent = helper.titleCase(lifecycle.to)
     logger.debug(`Entering State ${stateCurrent}`)
