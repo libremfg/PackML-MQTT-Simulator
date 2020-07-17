@@ -8,14 +8,14 @@
     "simulation",
     "manufacturing"
   ],
-  "homepage": "https://github.com/Spruik/PackML-MQTT-Simluator#readme",
+  "homepage": "https://github.com/Spruik/PackML-MQTT-Simulator#readme",
   "bugs": {
-    "url": "https://github.com/Spruik/PackML-MQTT-Simluator/issues",
+    "url": "https://github.com/Spruik/PackML-MQTT-Simulator/issues",
     "email": "info@spruiktec.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Spruik/PackML-MQTT-Simluator"
+    "url": "https://github.com/Spruik/PackML-MQTT-Simulator"
   },
   "main": "./src/index.js",
   "scripts": {
