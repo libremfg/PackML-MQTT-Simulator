@@ -12,4 +12,6 @@ COPY ./src/ /machine
 
 USER node
 
-CMD node index.js
+ENV NODE_ENV=production
+
+CMD ["node", "index.js"]
