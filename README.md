@@ -217,6 +217,9 @@ For any issue, there are fundamentally three ways an individual can contribute:
   - Added environmental variable for MQTT Port
   - Fixed typos
   - Added logging of mqttClient errors
+  - Upgraded MQTT library to v4.2.1
+  - Upgraded winston library to v3.3.3
+  - Upgraded sonarqube-scanner library to v2.7.0
 
 - 1.0.1 Update docs
   - Bump npm library versions

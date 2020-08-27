@@ -28,12 +28,12 @@
   "license": "MIT",
   "dependencies": {
     "javascript-state-machine": "^3.1.0",
-    "mqtt": "^3.0.0",
+    "mqtt": "^4.2.1",
     "seedrandom": "^3.0.5",
-    "winston": "^3.2.1"
+    "winston": "^3.3.3"
   },
   "devDependencies": {
-    "sonarqube-scanner": "^2.6.0",
+    "sonarqube-scanner": "^2.7.0",
     "standard": "^14.3.4"
   }
 }
