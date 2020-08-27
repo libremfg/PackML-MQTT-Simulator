@@ -286,6 +286,12 @@ mqttClient.on('message', (topic, message) => {
   }
 })
 
+// Display Client Errors
+mqttClient.on('error', (error) => {
+  logger.error(`MQTT Client error: ${error.message}`)
+  cleanExit()
+})
+
 // Graceful Exit
 var cleanExit = () => {
   if (global.sim) {

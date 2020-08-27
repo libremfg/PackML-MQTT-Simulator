@@ -216,6 +216,7 @@ For any issue, there are fundamentally three ways an individual can contribute:
 - 1.0.2
   - Added environmental variable for MQTT Port
   - Fixed typos
+  - Added logging of mqttClient errors
 
 - 1.0.1 Update docs
   - Bump npm library versions
