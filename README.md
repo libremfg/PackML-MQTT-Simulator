@@ -213,8 +213,12 @@ For any issue, there are fundamentally three ways an individual can contribute:
 
 ## Changelog
 
+- 1.0.3
+  - Add NODE_ENV=production to dockerfile
+  - Change CMD to use array for better SIGTERM handling
+
 - 1.0.2
-  - Add environmental variable for MQTT Port
+  - Add an environmental variable for MQTT Port
   - Fix typos
   - Add logging of mqttClient errors
   - Upgrade MQTT library to v4.2.1
