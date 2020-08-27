@@ -168,6 +168,10 @@ The ISA-95 model line name of this line. LINE used as the third topic in the MQT
 
 The address of the MQTT server. If this is unset, _mqtt://broker.hivemq.com_ will be used.
 
+### MQTT_PORT
+
+The port of the MQTT server. If left blank, the MQTT library will try and determine port based on protocol.
+
 ### MQTT_USERNAME
 
 The name of the MQTT user with subscribe and publish permissions.
@@ -208,6 +212,9 @@ For any issue, there are fundamentally three ways an individual can contribute:
 - By helping to resolve the issue: Typically, this is done either in the form of demonstrating that the issue reported is not a problem after all, or more often, by opening a Pull Request that changes some bit of something in the simulator in a concrete and reviewable manner.
 
 ## Changelog
+
+- 1.0.2
+  - Added environmental variable for MQTT Port
 
 - 1.0.1 Update docs
   - Bump npm library versions

@@ -21,6 +21,7 @@ global.config = {
   line: process.env.LINE || 'Line',
   startOnLoad: process.env.START || false,
   MQTT_URL: process.env.MQTT_URL || 'mqtt://broker.hivemq.com',
+  MQTT_PORT: process.env.MQTT_PORT || null,
   MQTT_USERNAME: process.env.MQTT_USERNAME || '',
   MQTT_PASSWORD: process.env.MQTT_PASSWORD || ''
 }
@@ -41,6 +42,7 @@ const packMLproducts = new RegExp(String.raw`^${topicPrefix}\/Command\/Product\/
 var mqttClient = mqtt.connect(
   global.config.MQTT_URL,
   {
+    port: global.config.MQTT_PORT,
     username: global.config.MQTT_USERNAME,
     password: global.config.MQTT_PASSWORD
   }
@@ -123,7 +125,7 @@ mqttClient.on('connect', (connack) => {
   global.sim = simulation.simulate(mode, state, tags)
 })
 
-mqttClient.on('close', () => { logger.info('Disconnected from ' + global.config.MQTT_URL) })
+mqttClient.on('close', () => { logger.info(`Disconnected from ${mqttClient.options.href || global.config.MQTT_URL}:${mqttClient.options.port}`) })
 
 // Handle PackML Commands
 mqttClient.on('message', (topic, message) => {
