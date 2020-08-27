@@ -35,8 +35,8 @@ seedRandom(topicPrefix, { global: true })
 const stateCommandTopic = new RegExp(String.raw`^${topicPrefix}\/Command\/(Start|Reset|Complete|Stop|Abort|Clear|Hold|Unhold|Suspend|Unsuspend)$`)
 const modeCommandTopic = new RegExp(String.raw`^${topicPrefix}\/Command\/(UnitMode)$`)
 const machineSpeedCommandTopic = new RegExp(String.raw`^${topicPrefix}\/Command\/MachSpeed$`)
-const packMLparameters = new RegExp(String.raw`^${topicPrefix}\/Command\/Parameter\/(\d*)\/(ID|Name|Unit|Value)$`)
-const packMLproducts = new RegExp(String.raw`^${topicPrefix}\/Command\/Product\/(\d*)\/(ProductID|ProcessParameter\/(\d*)\/(ID|Name|Unit|Value)|Ingredient\/(\d*)\/(IngredientID|Parameter\/(\d*)\/(ID|Name|Unit|Value)))$`)
+const packmlParameters = new RegExp(String.raw`^${topicPrefix}\/Command\/Parameter\/(\d*)\/(ID|Name|Unit|Value)$`)
+const packmlProducts = new RegExp(String.raw`^${topicPrefix}\/Command\/Product\/(\d*)\/(ProductID|ProcessParameter\/(\d*)\/(ID|Name|Unit|Value)|Ingredient\/(\d*)\/(IngredientID|Parameter\/(\d*)\/(ID|Name|Unit|Value)))$`)
 
 // Connect via mqtt
 var mqttClient = mqtt.connect(
@@ -160,9 +160,9 @@ mqttClient.on('message', (topic, message) => {
       return
     }
     tags.status.machSpeed = newMachSpeed
-  } else if (topic.match(packMLparameters)) {
+  } else if (topic.match(packmlParameters)) {
     // Parameters
-    const bits = topic.match(packMLparameters)
+    const bits = topic.match(packmlParameters)
     const index = parseInt(bits[1])
     if (bits[2] === 'ID') {
       message = parseInt(message)
@@ -192,9 +192,9 @@ mqttClient.on('message', (topic, message) => {
     }
     const camelCaseProperty = helper.camelCase(bits[2])
     tags.status.parameter[index][camelCaseProperty] = message
-  } else if (topic.match(packMLproducts)) {
+  } else if (topic.match(packmlProducts)) {
     // Products
-    const bits = topic.match(packMLproducts).filter(match => match !== undefined)
+    const bits = topic.match(packmlProducts).filter(match => match !== undefined)
     const index = parseInt(bits[1])
     if (bits.length === 3) {
       while (tags.status.product.length <= index) {

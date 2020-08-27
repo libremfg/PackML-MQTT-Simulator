@@ -17,7 +17,7 @@ Start your container with environmental variables
 ```shell
 $ docker run -it -e SITE=Site -e AREA=Area -e LINE=Line -e MQTT_HOST=mqtt://broker.hivemq.com spruiktec/packml-simulator
 2020-06-22T03:13:49.301Z | info: Initializing
-2020-06-22T03:13:49.817Z | info: Connected to mqtt://broker.hivemq.com
+2020-06-22T03:13:49.817Z | info: Connected to mqtt://broker.hivemq.com:1883
 2020-06-22T03:13:49.819Z | info: Site/Area/Line/Status/UnitModeCurrent : Production
 ```
 
@@ -30,7 +30,7 @@ added 421 packages from 213 contributors and audited 421 packages in 12.337s
 found 0 vulnerabilities
 $ node ./src/index.js
 2020-06-22T03:13:49.301Z | info: Initializing
-2020-06-22T03:13:49.817Z | info: Connected to mqtt://broker.hivemq.com
+2020-06-22T03:13:49.817Z | info: Connected to mqtt://broker.hivemq.com:1883
 2020-06-22T03:13:49.819Z | info: Site/Area/Line/Status/UnitModeCurrent : Production
 ```
 
@@ -214,13 +214,14 @@ For any issue, there are fundamentally three ways an individual can contribute:
 ## Changelog
 
 - 1.0.2
-  - Added environmental variable for MQTT Port
-  - Fixed typos
-  - Added logging of mqttClient errors
-  - Upgraded MQTT library to v4.2.1
-  - Upgraded winston library to v3.3.3
-  - Upgraded sonarqube-scanner library to v2.7.0
-  - Added port to connected message
+  - Add environmental variable for MQTT Port
+  - Fix typos
+  - Add logging of mqttClient errors
+  - Upgrade MQTT library to v4.2.1
+  - Upgrade winston library to v3.3.3
+  - Upgrade sonarqube-scanner library to v2.7.0
+  - Add port to connected message
+  - Update in code capitalization of PackML
 
 - 1.0.1 Update docs
   - Bump npm library versions
