@@ -17,7 +17,7 @@ Start your container with environmental variables
 ```shell
 $ docker run -it -e SITE=Site -e AREA=Area -e LINE=Line -e MQTT_HOST=mqtt://broker.hivemq.com spruiktec/packml-simulator
 2020-06-22T03:13:49.301Z | info: Initializing
-2020-06-22T03:13:49.817Z | info: Connected to mqtt://broker.hivemq.com
+2020-06-22T03:13:49.817Z | info: Connected to mqtt://broker.hivemq.com:1883
 2020-06-22T03:13:49.819Z | info: Site/Area/Line/Status/UnitModeCurrent : Production
 ```
 
@@ -30,7 +30,7 @@ added 421 packages from 213 contributors and audited 421 packages in 12.337s
 found 0 vulnerabilities
 $ node ./src/index.js
 2020-06-22T03:13:49.301Z | info: Initializing
-2020-06-22T03:13:49.817Z | info: Connected to mqtt://broker.hivemq.com
+2020-06-22T03:13:49.817Z | info: Connected to mqtt://broker.hivemq.com:1883
 2020-06-22T03:13:49.819Z | info: Site/Area/Line/Status/UnitModeCurrent : Production
 ```
 
@@ -95,10 +95,10 @@ Available Commands
 | `<SITE>/<AREA>/<LINE>/Command/Product/*i*/ProcessParameter/*j*/Unit`          | Integer | Product *i* Process Parameter *j* Unit                    |
 | `<SITE>/<AREA>/<LINE>/Command/Product/*i*/ProcessParameter/*j*/Value`         | Integer | Product *i* Process Parameter *j* Value                   |
 | `<SITE>/<AREA>/<LINE>/Command/Product/*i*/Ingredient/*j*/ID`                  | Integer | Product *i* Ingredient *n* ID                             |
-| `<SITE>/<AREA>/<LINE>/Command/Product/*i*/Ingredient/*j*/Parameter/*k*/ID`    | Integer | Product *i* Ingredient *j* Paramter *k* ID                |
-| `<SITE>/<AREA>/<LINE>/Command/Product/*i*/Ingredient/*j*/Parameter/*k*/Name`  | Integer | Product *i* Ingredient *j* Paramter *k* Name              |
-| `<SITE>/<AREA>/<LINE>/Command/Product/*i*/Ingredient/*j*/Parameter/*k*/Unit`  | Integer | Product *i* Ingredient *j* Paramter *k* Unit              |
-| `<SITE>/<AREA>/<LINE>/Command/Product/*i*/Ingredient/*j*/Parameter/*k*/Value` | Integer | Product *i* Ingredient *j* Paramter *k* Value             |
+| `<SITE>/<AREA>/<LINE>/Command/Product/*i*/Ingredient/*j*/Parameter/*k*/ID`    | Integer | Product *i* Ingredient *j* Parameter *k* ID               |
+| `<SITE>/<AREA>/<LINE>/Command/Product/*i*/Ingredient/*j*/Parameter/*k*/Name`  | Integer | Product *i* Ingredient *j* Parameter *k* Name             |
+| `<SITE>/<AREA>/<LINE>/Command/Product/*i*/Ingredient/*j*/Parameter/*k*/Unit`  | Integer | Product *i* Ingredient *j* Parameter *k* Unit             |
+| `<SITE>/<AREA>/<LINE>/Command/Product/*i*/Ingredient/*j*/Parameter/*k*/Value` | Integer | Product *i* Ingredient *j* Parameter *k* Value            |
 
 ### Status
 
@@ -120,10 +120,10 @@ Available Status'
 | `<SITE>/<AREA>/<LINE>/Status/Product/*i*/ProcessParameter/*j*/Unit`          | Integer | Product *i* Process Parameter *j* Unit                    |
 | `<SITE>/<AREA>/<LINE>/Status/Product/*i*/ProcessParameter/*j*/Value`         | Integer | Product *i* Process Parameter *j* Value                   |
 | `<SITE>/<AREA>/<LINE>/Status/Product/*i*/Ingredient/*j*/ID`                  | Integer | Product *i* Ingredient *n* ID                             |
-| `<SITE>/<AREA>/<LINE>/Status/Product/*i*/Ingredient/*j*/Parameter/*k*/ID`    | Integer | Product *i* Ingredient *j* Paramter *k* ID                |
-| `<SITE>/<AREA>/<LINE>/Status/Product/*i*/Ingredient/*j*/Parameter/*k*/Name`  | Integer | Product *i* Ingredient *j* Paramter *k* Name              |
-| `<SITE>/<AREA>/<LINE>/Status/Product/*i*/Ingredient/*j*/Parameter/*k*/Unit`  | Integer | Product *i* Ingredient *j* Paramter *k* Unit              |
-| `<SITE>/<AREA>/<LINE>/Status/Product/*i*/Ingredient/*j*/Parameter/*k*/Value` | Integer | Product *i* Ingredient *j* Paramter *k* Value             |
+| `<SITE>/<AREA>/<LINE>/Status/Product/*i*/Ingredient/*j*/Parameter/*k*/ID`    | Integer | Product *i* Ingredient *j* Parameter *k* ID               |
+| `<SITE>/<AREA>/<LINE>/Status/Product/*i*/Ingredient/*j*/Parameter/*k*/Name`  | Integer | Product *i* Ingredient *j* Parameter *k* Name             |
+| `<SITE>/<AREA>/<LINE>/Status/Product/*i*/Ingredient/*j*/Parameter/*k*/Unit`  | Integer | Product *i* Ingredient *j* Parameter *k* Unit             |
+| `<SITE>/<AREA>/<LINE>/Status/Product/*i*/Ingredient/*j*/Parameter/*k*/Value` | Integer | Product *i* Ingredient *j* Parameter *k* Value            |
 
 ### Admin
 
@@ -168,6 +168,10 @@ The ISA-95 model line name of this line. LINE used as the third topic in the MQT
 
 The address of the MQTT server. If this is unset, _mqtt://broker.hivemq.com_ will be used.
 
+### MQTT_PORT
+
+The port of the MQTT server. If left blank, the MQTT library will try and determine port based on protocol.
+
 ### MQTT_USERNAME
 
 The name of the MQTT user with subscribe and publish permissions.
@@ -208,6 +212,16 @@ For any issue, there are fundamentally three ways an individual can contribute:
 - By helping to resolve the issue: Typically, this is done either in the form of demonstrating that the issue reported is not a problem after all, or more often, by opening a Pull Request that changes some bit of something in the simulator in a concrete and reviewable manner.
 
 ## Changelog
+
+- 1.0.2
+  - Add environmental variable for MQTT Port
+  - Fix typos
+  - Add logging of mqttClient errors
+  - Upgrade MQTT library to v4.2.1
+  - Upgrade winston library to v3.3.3
+  - Upgrade sonarqube-scanner library to v2.7.0
+  - Add port to connected message
+  - Update in code capitalization of PackML
 
 - 1.0.1 Update docs
   - Bump npm library versions

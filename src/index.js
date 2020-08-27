@@ -9,7 +9,7 @@ const simulation = require('./simulation')
 const helper = require('./helper')
 
 var mqtt = require('mqtt')
-var seedrandom = require('seedrandom')
+var seedRandom = require('seedrandom')
 
 // Logger
 const logger = logging.logger
@@ -21,6 +21,7 @@ global.config = {
   line: process.env.LINE || 'Line',
   startOnLoad: process.env.START || false,
   MQTT_URL: process.env.MQTT_URL || 'mqtt://broker.hivemq.com',
+  MQTT_PORT: process.env.MQTT_PORT || null,
   MQTT_USERNAME: process.env.MQTT_USERNAME || '',
   MQTT_PASSWORD: process.env.MQTT_PASSWORD || ''
 }
@@ -30,17 +31,18 @@ global.sim = null
 
 // Initialize _random_ with site, area and line to have consistent results with the same machine.
 const topicPrefix = `${global.config.site}/${global.config.area}/${global.config.line}`
-seedrandom(topicPrefix, { global: true })
+seedRandom(topicPrefix, { global: true })
 const stateCommandTopic = new RegExp(String.raw`^${topicPrefix}\/Command\/(Start|Reset|Complete|Stop|Abort|Clear|Hold|Unhold|Suspend|Unsuspend)$`)
 const modeCommandTopic = new RegExp(String.raw`^${topicPrefix}\/Command\/(UnitMode)$`)
 const machineSpeedCommandTopic = new RegExp(String.raw`^${topicPrefix}\/Command\/MachSpeed$`)
-const packMLparameters = new RegExp(String.raw`^${topicPrefix}\/Command\/Parameter\/(\d*)\/(ID|Name|Unit|Value)$`)
-const packMLproducts = new RegExp(String.raw`^${topicPrefix}\/Command\/Product\/(\d*)\/(ProductID|ProcessParameter\/(\d*)\/(ID|Name|Unit|Value)|Ingredient\/(\d*)\/(IngredientID|Parameter\/(\d*)\/(ID|Name|Unit|Value)))$`)
+const packmlParameters = new RegExp(String.raw`^${topicPrefix}\/Command\/Parameter\/(\d*)\/(ID|Name|Unit|Value)$`)
+const packmlProducts = new RegExp(String.raw`^${topicPrefix}\/Command\/Product\/(\d*)\/(ProductID|ProcessParameter\/(\d*)\/(ID|Name|Unit|Value)|Ingredient\/(\d*)\/(IngredientID|Parameter\/(\d*)\/(ID|Name|Unit|Value)))$`)
 
 // Connect via mqtt
 var mqttClient = mqtt.connect(
   global.config.MQTT_URL,
   {
+    port: global.config.MQTT_PORT,
     username: global.config.MQTT_USERNAME,
     password: global.config.MQTT_PASSWORD
   }
@@ -56,7 +58,7 @@ var changed = (a, b, c) => {
     throw Error('Should change null')
   }
   // Special Overloads
-  b = b === 'productId' ? 'ProudctID' : b
+  b = b === 'productId' ? 'ProductID' : b
   b = b === 'ingredientId' ? 'IngredientID' : b
   b = b === 'id' ? 'ID' : b
   b = helper.titleCase(b) // Normal Overload
@@ -104,9 +106,9 @@ tags.admin.prodDefectiveCount.push(
   )
 )
 
-mqttClient.on('connect', (connack) => {
-  logger.info('Connected to ' + global.config.MQTT_URL)
-  if (!connack.sessionPresent) {
+mqttClient.on('connect', (packet) => {
+  logger.info(`Connected to ${mqttClient.options.href || global.config.MQTT_URL}:${mqttClient.options.port}`)
+  if (!packet.sessionPresent) {
     mqttClient.subscribe(`${topicPrefix}/Command/#`)
   }
   state.observe('onEnterState', (lifecycle) => {
@@ -123,7 +125,7 @@ mqttClient.on('connect', (connack) => {
   global.sim = simulation.simulate(mode, state, tags)
 })
 
-mqttClient.on('close', () => { logger.info('Disconnected from ' + global.config.MQTT_URL) })
+mqttClient.on('close', () => { logger.info(`Disconnected from ${mqttClient.options.href || global.config.MQTT_URL}:${mqttClient.options.port}`) })
 
 // Handle PackML Commands
 mqttClient.on('message', (topic, message) => {
@@ -158,9 +160,9 @@ mqttClient.on('message', (topic, message) => {
       return
     }
     tags.status.machSpeed = newMachSpeed
-  } else if (topic.match(packMLparameters)) {
+  } else if (topic.match(packmlParameters)) {
     // Parameters
-    const bits = topic.match(packMLparameters)
+    const bits = topic.match(packmlParameters)
     const index = parseInt(bits[1])
     if (bits[2] === 'ID') {
       message = parseInt(message)
@@ -190,9 +192,9 @@ mqttClient.on('message', (topic, message) => {
     }
     const camelCaseProperty = helper.camelCase(bits[2])
     tags.status.parameter[index][camelCaseProperty] = message
-  } else if (topic.match(packMLproducts)) {
+  } else if (topic.match(packmlProducts)) {
     // Products
-    const bits = topic.match(packMLproducts).filter(match => match !== undefined)
+    const bits = topic.match(packmlProducts).filter(match => match !== undefined)
     const index = parseInt(bits[1])
     if (bits.length === 3) {
       while (tags.status.product.length <= index) {
@@ -248,7 +250,7 @@ mqttClient.on('message', (topic, message) => {
         tags.status.product[index].processParameter[nextIndex][helper.camelCase(bits[4])] = message
       }
     } else if (bits.length === 7) {
-      const ingreidentIndex = parseInt(bits[2])
+      const ingredientIndex = parseInt(bits[2])
       const parameterIndex = parseInt(bits[5])
       if (bits[6] === 'ID') {
         message = parseInt(message)
@@ -266,7 +268,7 @@ mqttClient.on('message', (topic, message) => {
       while (tags.status.product.length <= index) {
         tags.status.product.push(new packmlTags.Product())
       }
-      while (tags.status.product[index].ingredient.length <= ingreidentIndex) {
+      while (tags.status.product[index].ingredient.length <= ingredientIndex) {
         tags.status.product[index].ingredient.push(new packmlTags.Parameter(), {
           set (target, prop, value) {
             changed('Status/Product/' + index + '/Ingredient/' + tags.status.product[index].ingredient.length - 1 + '/', prop, value)
@@ -274,14 +276,20 @@ mqttClient.on('message', (topic, message) => {
           }
         })
       }
-      while (tags.status.product[index].ingredient[ingreidentIndex].parameter <= parameterIndex) {
-        tags.status.product[index].ingredient[ingreidentIndex].parameter.push(new packmlTags.Parameter())
+      while (tags.status.product[index].ingredient[ingredientIndex].parameter <= parameterIndex) {
+        tags.status.product[index].ingredient[ingredientIndex].parameter.push(new packmlTags.Parameter())
       }
-      tags.status.product[index].ingredient[ingreidentIndex].parameter[parameterIndex][helper.camelCase(bits[6])] = message
+      tags.status.product[index].ingredient[ingredientIndex].parameter[parameterIndex][helper.camelCase(bits[6])] = message
     }
   } else {
     logger.debug(`No handle defined for ${topic}`)
   }
+})
+
+// Display Client Errors
+mqttClient.on('error', (error) => {
+  logger.error(`MQTT Client error: ${error.message}`)
+  cleanExit()
 })
 
 // Graceful Exit
