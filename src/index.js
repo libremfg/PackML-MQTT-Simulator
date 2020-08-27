@@ -107,7 +107,7 @@ tags.admin.prodDefectiveCount.push(
 )
 
 mqttClient.on('connect', (packet) => {
-  logger.info('Connected to ' + global.config.MQTT_URL)
+  logger.info(`Connected to ${mqttClient.options.href || global.config.MQTT_URL}:${mqttClient.options.port}`)
   if (!packet.sessionPresent) {
     mqttClient.subscribe(`${topicPrefix}/Command/#`)
   }
