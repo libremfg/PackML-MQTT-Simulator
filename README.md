@@ -221,6 +221,7 @@ For any issue, there are fundamentally three ways an individual can contribute:
 - 1.0.4
   - Add memory limits
   - Changed default LINE to hostname
+  - Changed default clientId to MQTTv3.1.1 conforming hostname
 
 - 1.0.3
   - Add NODE_ENV=production to dockerfile

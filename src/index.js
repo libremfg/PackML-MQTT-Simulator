@@ -43,6 +43,7 @@ const packmlProducts = new RegExp(String.raw`^${topicPrefix}\/Command\/Product\/
 var mqttClient = mqtt.connect(
   global.config.MQTT_URL,
   {
+    clientId: helper.getClientId(os.hostname()),
     port: global.config.MQTT_PORT,
     username: global.config.MQTT_USERNAME,
     password: global.config.MQTT_PASSWORD
