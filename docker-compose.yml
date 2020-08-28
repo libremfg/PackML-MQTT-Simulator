@@ -1,4 +1,4 @@
-version: "3.7"
+version: "2.4"
 
 services:
   greenville-packaging-line1:
@@ -7,10 +7,12 @@ services:
       SITE: Greenville
       AREA: Packaging
       LINE: 'Line 1'
-  
+    mem_limit: 30MB
+
   greenville-packaging-line2:
     image: spruiktec/packml-simulator
     environment:
       SITE: Greenville
       AREA: Packaging
       LINE: 'Line 2'
+    mem_limit: 30MB

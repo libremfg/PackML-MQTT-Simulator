@@ -8,14 +8,14 @@ PackML MQTT Simulator is a virtual line that interfaces using PackML implemented
 
 ## Getting Started
 
-To start and run the PackML simulation, you'll need an MQTT server running and accessible to the image. Once available, the easiest approach is using docker to run the simulation using environmental variables to control the MQTT host, Site, Area, and line. Once up and running, use an MQTT client to publish to .../Command/Reset and .../Command/Start to get the simulated machine into the execute state.
+To start and run the PackML simulation, you'll need an MQTT server running and accessible to the image. Once available, the easiest approach is using docker to run the simulation using environmental variables to control the MQTT connection, Site, Area, and line. Once up and running, use an MQTT client to publish to .../Command/Reset and .../Command/Start to get the simulated machine into the execute state.
 
 ### Docker
 
 Start your container with environmental variables
 
 ```shell
-$ docker run -it -e SITE=Site -e AREA=Area -e LINE=Line -e MQTT_HOST=mqtt://broker.hivemq.com spruiktec/packml-simulator
+$ docker run -it -e SITE=Site -e AREA=Area -e LINE=Line -e MQTT_HOST=mqtt://broker.hivemq.com -m 30m spruiktec/packml-simulator
 2020-06-22T03:13:49.301Z | info: Initializing
 2020-06-22T03:13:49.817Z | info: Connected to mqtt://broker.hivemq.com:1883
 2020-06-22T03:13:49.819Z | info: Site/Area/Line/Status/UnitModeCurrent : Production
@@ -28,7 +28,9 @@ $ npm i
 ...
 added 421 packages from 213 contributors and audited 421 packages in 12.337s
 found 0 vulnerabilities
-$ node ./src/index.js
+$ export LINE=Line
+
+$ node --max-old-space-size=20 ./src/index.js
 2020-06-22T03:13:49.301Z | info: Initializing
 2020-06-22T03:13:49.817Z | info: Connected to mqtt://broker.hivemq.com:1883
 2020-06-22T03:13:49.819Z | info: Site/Area/Line/Status/UnitModeCurrent : Production
@@ -162,7 +164,7 @@ The ISA-95 Model area name of this line. AREA used as the second topic in the MQ
 
 ### LINE
 
-The ISA-95 model line name of this line. LINE used as the third topic in the MQTT structure. If this is unset, _Line_ will be used.
+The ISA-95 model line name of this line. LINE used as the third topic in the MQTT structure. If this is unset, hostname will be used.
 
 ### MQTT_URL
 
@@ -185,7 +187,7 @@ The password for the MQTT user with subscribe and publish permissions.
 Use docker-compose to simulate multiple independent lines at once. E.g.
 
 ```yml
-version: "3.7"
+version: "2.4"
 
 services:
   greenville-packaging-line1:
@@ -194,13 +196,16 @@ services:
       SITE: Greenville
       AREA: Packaging
       LINE: 'Line 1'
+    mem_limit: 30MB
+
   greenville-packaging-line2:
     image: spruiktec/packml-simulator
     environment:
       SITE: Greenville
       AREA: Packaging
       LINE: 'Line 2'
-  ...
+    mem_limit: 30MB
+
 ```
 
 ## Contributing
@@ -212,6 +217,11 @@ For any issue, there are fundamentally three ways an individual can contribute:
 - By helping to resolve the issue: Typically, this is done either in the form of demonstrating that the issue reported is not a problem after all, or more often, by opening a Pull Request that changes some bit of something in the simulator in a concrete and reviewable manner.
 
 ## Changelog
+
+- 1.0.4
+  - Add memory limits
+  - Changed default LINE to hostname
+  - Changed default clientId to MQTTv3.1.1 conforming hostname
 
 - 1.0.3
   - Add NODE_ENV=production to dockerfile

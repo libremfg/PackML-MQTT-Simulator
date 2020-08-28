@@ -14,3 +14,9 @@ exports.camelCase = (str) => {
     return index === 0 ? word.toLowerCase() : word.toUpperCase()
   }).replace(/\s+/g, '')
 }
+
+exports.getClientId = (hostname) => {
+  // Confirm to MQTT v3.1.1
+  const regex = /[^a-zA-Z0-9]/g
+  return hostname.replace(regex, "").substring(0, 23)
+}
