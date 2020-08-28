@@ -7,6 +7,7 @@ const packmlModel = require('./packml-model')
 const packmlTags = require('./packml-tags')
 const simulation = require('./simulation')
 const helper = require('./helper')
+const os = require('os')
 
 var mqtt = require('mqtt')
 var seedRandom = require('seedrandom')
@@ -18,7 +19,7 @@ logger.info('Initializing')
 global.config = {
   site: process.env.SITE || 'Site',
   area: process.env.AREA || 'Area',
-  line: process.env.LINE || 'Line',
+  line: process.env.LINE || os.hostname(),
   startOnLoad: process.env.START || false,
   MQTT_URL: process.env.MQTT_URL || 'mqtt://broker.hivemq.com',
   MQTT_PORT: process.env.MQTT_PORT || null,
@@ -125,7 +126,9 @@ mqttClient.on('connect', (packet) => {
   global.sim = simulation.simulate(mode, state, tags)
 })
 
-mqttClient.on('close', () => { logger.info(`Disconnected from ${mqttClient.options.href || global.config.MQTT_URL}:${mqttClient.options.port}`) })
+mqttClient.on('close', () => { 
+  logger.info(`Disconnected from ${mqttClient.options.href || global.config.MQTT_URL}:${mqttClient.options.port}`) 
+})
 
 // Handle PackML Commands
 mqttClient.on('message', (topic, message) => {
