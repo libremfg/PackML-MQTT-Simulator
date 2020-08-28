@@ -8,10 +8,12 @@ COPY package.json /machine
 
 RUN npm install
 
-COPY ./src/ /machine
+COPY --chown=node:node ./src/ /machine
 
 USER node
 
 ENV NODE_ENV=production
+
+ENV NODE_OPTIONS="--max-old-space-size=20"
 
 CMD ["node", "index.js"]
