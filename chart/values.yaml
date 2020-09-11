@@ -1,0 +1,13 @@
+replicaCount: 3 
+image:
+  repository: spruiktec/packml-simulator
+  pullPolicy: IfNotPresent
+
+config:
+  SITE: "Bathurst"
+  AREA: "Packaging"
+  LINE: "Line_1"
+  MQTT_URL: "mqtt://emqx"
+  MQTT_PORT: "1883"
+  MQTT_USERNAME: "system"
+  MQTT_PASSWORD: "public"

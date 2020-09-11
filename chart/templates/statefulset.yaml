@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: packml-sim
+spec:
+  serviceName: "packml-sim"
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: packml-sim
+  template:
+    metadata:
+      labels:
+        app: packml-sim
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:latest"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: MQTT_URL
+              value: "mqtt://emqx"
+            - name: MQTT_PORT
+              value: "1883"
+            - name: MQTT_USERNAME
+              value: "system"
+            - name: MQTT_PASSWORD
+              value: "public"
+            - name: SITE
+              value: "Bathurst"
+            - name: AREA
+              value: "Packaging"
+            - name: LINE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name

@@ -1,18 +1,24 @@
 version: "2.4"
 
 services:
-  greenville-packaging-line1:
+  bathurst-packaging-line1:
     image: spruiktec/packml-simulator
     environment:
-      SITE: Greenville
+      SITE: Bathurst
       AREA: Packaging
       LINE: 'Line 1'
+      MQTT_URL: 'mqtt://localhost'
+      MQTT_USERNAME: 'system'
+      MQTT_PASSWORD: 'public'
     mem_limit: 30MB
 
-  greenville-packaging-line2:
+  bathurst-packaging-line2:
     image: spruiktec/packml-simulator
     environment:
-      SITE: Greenville
+      SITE: Bathurst
       AREA: Packaging
       LINE: 'Line 2'
+      MQTT_URL: 'mqtt://localhost'
+      MQTT_USERNAME: 'system'
+      MQTT_PASSWORD: 'public'
     mem_limit: 30MB
