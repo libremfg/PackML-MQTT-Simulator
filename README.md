@@ -217,6 +217,11 @@ For any issue, there are fundamentally three ways an individual can contribute:
 - By helping to resolve the issue: Typically, this is done either in the form of demonstrating that the issue reported is not a problem after all, or more often, by opening a Pull Request that changes some bit of something in the simulator in a concrete and reviewable manner.
 
 ## Changelog
+
+- 1.0.7
+  - Update ini library from 1.3.5 to 1.3.8
+  - Add docker container labels
+
 - 1.0.6
   - Update bl library to 1.2.3
 
