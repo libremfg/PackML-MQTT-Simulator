@@ -1,6 +1,11 @@
 FROM node:12-alpine
 
-LABEL maintainer="Tom Hollingworth <tom.hollingworth@spruiktec.com>"
+# Labels
+LABEL maintainer="tom.hollingworth@spruiktec.com"
+LABEL org.opencontainers.image.authors="tom.hollingworth@spruiktec.com"
+LABEL org.opencontainers.image.source="https://github.com/Spruik/PackML-MQTT-Simulator"
+LABEL org.opencontainers.image.url="https://spruiktec.com/"
+LABEL org.opencontainers.image.vendor="Spruik Technologies LLC"
 
 WORKDIR /machine
 
