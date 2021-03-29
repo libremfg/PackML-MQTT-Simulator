@@ -124,7 +124,7 @@ mqttClient.on('connect', (packet) => {
     tags.status.unitModeCurrent = unitMode
   })
   // Simulate
-  global.sim = simulation.simulate(mode, state, tags, process.env.SPEED || 1000,)
+  global.sim = simulation.simulate(mode, state, tags, process.env.TICK || 1000,)
 })
 
 mqttClient.on('close', () => { 

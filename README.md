@@ -182,7 +182,7 @@ The name of the MQTT user with subscribe and publish permissions.
 
 The password for the MQTT user with subscribe and publish permissions.
 
-### SPEED
+### TICK
 
 The tick speed of the simulation in milliseconds. This is optional. Default is 1000.
 
@@ -223,7 +223,7 @@ For any issue, there are fundamentally three ways an individual can contribute:
 ## Changelog
 
 - 1.0.8
-  - Added SPEED env variable
+  - Add simulation TICK env variable
 
 - 1.0.7
   - Update ini library from 1.3.5 to 1.3.8
