@@ -182,6 +182,10 @@ The name of the MQTT user with subscribe and publish permissions.
 
 The password for the MQTT user with subscribe and publish permissions.
 
+### TICK
+
+The tick speed of the simulation in milliseconds. This is optional. Default is 1000.
+
 ## Enterprise Simulation
 
 Use docker-compose to simulate multiple independent lines at once. E.g.
@@ -217,6 +221,9 @@ For any issue, there are fundamentally three ways an individual can contribute:
 - By helping to resolve the issue: Typically, this is done either in the form of demonstrating that the issue reported is not a problem after all, or more often, by opening a Pull Request that changes some bit of something in the simulator in a concrete and reviewable manner.
 
 ## Changelog
+
+- 1.0.8
+  - Add simulation TICK env variable
 
 - 1.0.7
   - Update ini library from 1.3.5 to 1.3.8
