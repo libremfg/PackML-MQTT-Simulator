@@ -222,6 +222,10 @@ For any issue, there are fundamentally three ways an individual can contribute:
 
 ## Changelog
 
+- 1.0.9
+  - Update lodash library from 4.17.19 to 4.17.21
+  - Update hosted-git-info from 2.8.8 to 2.8.9
+
 - 1.0.8
   - Add simulation TICK env variable
 
