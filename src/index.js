@@ -7,9 +7,10 @@ const packmlModel = require('./packml-model')
 const packmlTags = require('./packml-tags')
 const simulation = require('./simulation')
 const helper = require('./helper')
+const mqtt = require('./clients/mqtt');
+const sparkplug = require('./clients/sparkplug');
 const os = require('os')
 
-var mqtt = require('mqtt')
 var seedRandom = require('seedrandom')
 
 // Logger
@@ -23,8 +24,10 @@ global.config = {
   startOnLoad: process.env.START || false,
   MQTT_URL: process.env.MQTT_URL || 'mqtt://broker.hivemq.com',
   MQTT_PORT: process.env.MQTT_PORT || null,
-  MQTT_USERNAME: process.env.MQTT_USERNAME || '',
-  MQTT_PASSWORD: process.env.MQTT_PASSWORD || ''
+  MQTT_USERNAME: process.env.MQTT_USERNAME || null,
+  MQTT_PASSWORD: process.env.MQTT_PASSWORD || null,
+  MQTT_CLIENT_ID: process.env.MQTT_CLIENT_ID || helper.getClientId(os.hostname()),
+  CLIENT_TYPE: process.env.CLIENT_TYPE ? process.env.CLIENT_TYPE.toLowerCase() : 'mqtt'
 }
 
 // Simulation
@@ -39,16 +42,6 @@ const machineSpeedCommandTopic = new RegExp(String.raw`^${topicPrefix}\/Command\
 const packmlParameters = new RegExp(String.raw`^${topicPrefix}\/Command\/Parameter\/(\d*)\/(ID|Name|Unit|Value)$`)
 const packmlProducts = new RegExp(String.raw`^${topicPrefix}\/Command\/Product\/(\d*)\/(ProductID|ProcessParameter\/(\d*)\/(ID|Name|Unit|Value)|Ingredient\/(\d*)\/(IngredientID|Parameter\/(\d*)\/(ID|Name|Unit|Value)))$`)
 
-// Connect via mqtt
-var mqttClient = mqtt.connect(
-  global.config.MQTT_URL,
-  {
-    clientId: helper.getClientId(os.hostname()),
-    port: global.config.MQTT_PORT,
-    username: global.config.MQTT_USERNAME,
-    password: global.config.MQTT_PASSWORD
-  }
-)
 
 // PackML State Model
 var state = new packmlModel.StateMachine()
@@ -66,7 +59,7 @@ var changed = (a, b, c) => {
   b = helper.titleCase(b) // Normal Overload
   const topic = topicPrefix + '/' + a.replace('.', '/') + b
   logger.info(`${topic} : ${c}`)
-  mqttClient.publish(topic, c == null || Number.isNaN(c) ? '' : c + '', { retain: true })
+  client.publish(topic, c, { retain: true })
 }
 // PackML Tags
 var tags = new Proxy(new packmlTags.PackmlTags(changed), {
@@ -108,11 +101,22 @@ tags.admin.prodDefectiveCount.push(
   )
 )
 
-mqttClient.on('connect', (packet) => {
-  logger.info(`Connected to ${mqttClient.options.href || global.config.MQTT_URL}:${mqttClient.options.port}`)
-  if (!packet.sessionPresent) {
-    mqttClient.subscribe(`${topicPrefix}/Command/#`)
-  }
+// Connect to Client
+var client = null;
+switch (global.config.CLIENT_TYPE) {
+  case 'sparkplug':
+    client = new sparkplug.Client(global.config, tags);
+    break;
+  case 'mqtt':
+    client = new mqtt.Client(global.config, tags);
+    break;
+  default:
+    logger.info(`No client set, defaulting to 'mqtt'`)
+    client = new mqtt.Client(global.config);    
+}
+
+client.on('connect', (packet) => {
+  logger.info(`Connected to ${client.options().href || global.config.MQTT_URL}:${client.options().port}`)
   state.observe('onEnterState', (lifecycle) => {
     const stateCurrent = helper.titleCase(lifecycle.to)
     logger.debug(`Entering State ${stateCurrent}`)
@@ -127,12 +131,12 @@ mqttClient.on('connect', (packet) => {
   global.sim = simulation.simulate(mode, state, tags, process.env.TICK || 1000,)
 })
 
-mqttClient.on('close', () => { 
-  logger.info(`Disconnected from ${mqttClient.options.href || global.config.MQTT_URL}:${mqttClient.options.port}`) 
+client.on('close', () => { 
+  logger.info(`Disconnected from ${client.options().href || globalConfig.MQTT_URL}:${client.options().port}`) 
 })
 
 // Handle PackML Commands
-mqttClient.on('message', (topic, message) => {
+client.on('message', (topic, message) => {
   if (topic.match(stateCommandTopic)) {
     // State Commands
     const command = topic.match(stateCommandTopic)[1]
@@ -291,7 +295,7 @@ mqttClient.on('message', (topic, message) => {
 })
 
 // Display Client Errors
-mqttClient.on('error', (error) => {
+client.on('error', (error) => {
   logger.error(`MQTT Client error: ${error.message}`)
   cleanExit()
 })
@@ -301,8 +305,8 @@ var cleanExit = () => {
   if (global.sim) {
     clearInterval(global.sim)
   }
-  if (mqttClient.connected) {
-    mqttClient.end(false, { reasonCode: 1, properties: { reasonString: 'Shutdown' } }, () => {
+  if (client.isConnected()) {
+    client.end(false, { reasonCode: 1, properties: { reasonString: 'Shutdown' } }, () => {
       logger.info('Graceful shutdown')
       return process.exit(0)
     })
