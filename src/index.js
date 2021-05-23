@@ -29,6 +29,8 @@ global.config = {
   MQTT_CLIENT_ID: process.env.MQTT_CLIENT_ID || helper.getClientId(os.hostname()),
   CLIENT_TYPE: process.env.CLIENT_TYPE ? process.env.CLIENT_TYPE.toLowerCase() : 'mqtt',
   TICK: process.env.TICK || 1000,
+  SPARKPLUG_GROUP_ID: process.env.SPARKPLUG_GROUP_ID || process.env.SITE || 'PackML Simulator',
+  SPARKPLUG_EDGE_NODE: process.env.SPARKPLUG_EDGE_NODE || process.env.AREA || `${global.config.site}_${global.config.area}_${global.config.line}`,
 }
 
 // Simulation
@@ -121,12 +123,14 @@ client.on('connect', (packet) => {
   state.observe('onEnterState', (lifecycle) => {
     const stateCurrent = helper.titleCase(lifecycle.to)
     logger.debug(`Entering State ${stateCurrent}`)
-    tags.status.stateCurrent = stateCurrent
+    tags.status.stateCurrentStr = stateCurrent
+    tags.status.stateCurrent = packmlModel.getStateIntByStateText(lifecycle.to);
   })
   mode.observe('onEnterState', (lifecycle) => {
     const unitMode = helper.titleCase(lifecycle.to)
     logger.debug(`Entering UnitMode ${unitMode}`)
-    tags.status.unitModeCurrent = unitMode
+    tags.status.unitModeCurrentStr = unitMode
+    tags.status.unitModeCurrent = packmlModel.getModeIntByModeText(lifecycle.to);
   })
   // Simulate
   global.sim = simulation.simulate(mode, state, tags, global.config.TICK)

@@ -108,7 +108,9 @@ class Status {
       }
     })
     this.stateCurrent = 0
+    this.stateCurrentStr = ''
     this.unitModeCurrent = 0
+    this.unitModeCurrentStr = ''
     this.machSpeed = 0.0
     this.curMachSpeed = 0.0
     this.parameter = []
@@ -163,11 +165,22 @@ class Command {
   constructor () {
     this.cntrlCmd = 0
     this.parameter = []
+    this.product = []
     this.remoteInterface = []
     this.unitMode = 0
     this.unitModeChangeRequest = false
     this.machSpeed = 0.0
     this.cmdChangeRequest = false
+    this.start = 0
+    this.reset = 0
+    this.complete = 0
+    this.stop = 0
+    this.abort = 0
+    this.clear = 0
+    this.hold = 0
+    this.unhold = 0
+    this.suspend = 0
+    this.unsuspend = 0
   }
 }
 
