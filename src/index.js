@@ -27,7 +27,8 @@ global.config = {
   MQTT_USERNAME: process.env.MQTT_USERNAME || null,
   MQTT_PASSWORD: process.env.MQTT_PASSWORD || null,
   MQTT_CLIENT_ID: process.env.MQTT_CLIENT_ID || helper.getClientId(os.hostname()),
-  CLIENT_TYPE: process.env.CLIENT_TYPE ? process.env.CLIENT_TYPE.toLowerCase() : 'mqtt'
+  CLIENT_TYPE: process.env.CLIENT_TYPE ? process.env.CLIENT_TYPE.toLowerCase() : 'mqtt',
+  TICK: process.env.TICK || 1000,
 }
 
 // Simulation
@@ -128,7 +129,7 @@ client.on('connect', (packet) => {
     tags.status.unitModeCurrent = unitMode
   })
   // Simulate
-  global.sim = simulation.simulate(mode, state, tags, process.env.TICK || 1000,)
+  global.sim = simulation.simulate(mode, state, tags, global.config.TICK)
 })
 
 client.on('close', () => { 
