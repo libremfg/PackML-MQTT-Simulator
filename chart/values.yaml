@@ -11,3 +11,4 @@ config:
   MQTT_PORT: "1883"
   MQTT_USERNAME: "system"
   MQTT_PASSWORD: "public"
+  TICK: 1000
