@@ -8,8 +8,8 @@ PackML MQTT Simulator is a virtual line that interfaces using PackML implemented
 
 The simulator supports the following topic and payload defintions:
 
-- Custom
-- SparkplugB v1.0
+- [Custom](#interfacing-via-custom-interface)
+- [SparkplugB v1.0](#interfacing-via-sparkplugb-v10)
 
 ## Getting Started
 
@@ -159,9 +159,9 @@ Available Admin Status
 
 ## Interfacing via SparkplugB v1.0
 
-Refer to the (Sparkplug B Payload and Topic Payload Definition Specification)[https://www.eclipse.org/tahu/spec/Sparkplug%20Topic%20Namespace%20and%20State%20ManagementV2.2-with%20appendix%20B%20format%20-%20Eclipse.pdf].
+Refer to the [Sparkplug B Payload and Topic Payload Definition Specification](https://www.eclipse.org/tahu/spec/Sparkplug%20Topic%20Namespace%20and%20State%20ManagementV2.2-with%20appendix%20B%20format%20-%20Eclipse.pdf).
 
-### Example Publishing to Igniition v8.1.5 SCADA with Cirrus Link Modules
+Below is an example of publishing to Igniition v8.1.5 SCADA with Cirrus Link Modules. The MQTT Engine was configured with the corresponding namespace filter for the simulation environmental variables.
 
 ![Ignition Sparkplug B Example](./docs/ignition-sparkplugb-example.gif)
 
