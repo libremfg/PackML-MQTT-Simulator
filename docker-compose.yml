@@ -22,3 +22,15 @@ services:
       MQTT_USERNAME: 'system'
       MQTT_PASSWORD: 'public'
     mem_limit: 30MB
+
+  greenville-cnc-line1:
+    image: spruiktec/packml-simulator
+    environment:
+      SITE: Greenville
+      AREA: CNC
+      LINE: 'Line 1'
+      MQTT_URL: 'mqtt://localhost'
+      MQTT_USERNAME: 'system'
+      MQTT_PASSWORD: 'public'
+      CLIENT_TYPE: sparkplugb
+    mem_limit: 30MB
