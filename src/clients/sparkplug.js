@@ -15,7 +15,7 @@ class Client extends events.EventEmitter {
             password: globalConfig.MQTT_PASSWORD,
             groupId: globalConfig.SPARKPLUG_GROUP_ID,
             edgeNode: globalConfig.SPARKPLUG_EDGE_NODE,
-            clientId: globalConfig.clientId,
+            clientId: globalConfig.MQTT_CLIENT_ID,
             version: 'spBv1.0',
         };
         this._globalConfig = globalConfig
@@ -183,8 +183,8 @@ class Client extends events.EventEmitter {
             "timestamp" : 1465456711580
         };
         // Publish device death
-        this.client.publishDeviceDeath(deviceId, payload);
-        this.client.end()
+        this.client.publishDeviceDeath(this.deviceId, payload);
+        this.client.stop()
         cb();
     }
 
