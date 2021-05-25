@@ -20,3 +20,24 @@ exports.getClientId = (hostname) => {
   const regex = /[^a-zA-Z0-9]/g
   return hostname.replace(regex, "").substring(0, 23)
 }
+
+exports.flattenObject = (ob) => {
+  var toReturn = {};
+
+    for (var i in ob) {
+        if (!ob.hasOwnProperty(i)) continue;
+
+        if ((typeof ob[i]) == 'object' && ob[i] !== null) {
+            var flatObject = this.flattenObject(ob[i]);
+            for (var x in flatObject) {
+                if (!flatObject.hasOwnProperty(x)) continue;
+                const index = i.replace(/^./, i[0].toUpperCase())
+                toReturn[index + '/' + x] = flatObject[x];
+            }
+        } else {
+            const index = i.replace(/^./, i[0].toUpperCase())
+            toReturn[index] = ob[i];
+        }
+    }
+    return toReturn;
+}
