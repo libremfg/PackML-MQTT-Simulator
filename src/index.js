@@ -150,7 +150,7 @@ client.on('message', (topic, message) => {
     const command = topic.match(stateCommandTopic)[1]
     try {
       const value = parseInt(message)
-      if (value === 1) {
+      if (value === 1 || message === true) {
         state[command.toLowerCase()]()
       } else {
         logger.debug(`Unknown Command payload: ${message}`)

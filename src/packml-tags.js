@@ -171,16 +171,16 @@ class Command {
     this.unitModeChangeRequest = false
     this.machSpeed = 0.0
     this.cmdChangeRequest = false
-    this.start = 0
-    this.reset = 0
-    this.complete = 0
-    this.stop = 0
-    this.abort = 0
-    this.clear = 0
-    this.hold = 0
-    this.unhold = 0
-    this.suspend = 0
-    this.unsuspend = 0
+    this.start = false
+    this.reset = false
+    this.complete = false
+    this.stop = false
+    this.abort = false
+    this.clear = false
+    this.hold = false
+    this.unhold = false
+    this.suspend = false
+    this.unsuspend = false
   }
 }
 
