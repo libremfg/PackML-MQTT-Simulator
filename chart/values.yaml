@@ -12,3 +12,4 @@ config:
   MQTT_USERNAME: "system"
   MQTT_PASSWORD: "public"
   TICK: 1000
+  CLIENT_TYPE: "mqtt"
