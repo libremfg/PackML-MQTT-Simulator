@@ -2,13 +2,18 @@
 
 > Manufacturing line simulator interfaced using PackML over MQTT.
 
-PackML MQTT Simulator is a virtual line that interfaces using PackML implemented over MQTT. For use with the development of Industry 4.0 software solutions. The simulator implements the following PackML State model below and communicates over MQTT using `<SITE>/<AREA>/<LINE>/*` topics as defined by environmental variables.
+PackML MQTT Simulator is a virtual line that interfaces using PackML implemented over MQTT. For use with the development of Industry 4.0 software solutions. The simulator implements the following PackML State model below and communicates over MQTT topics as defined by environmental variables.
 
 ![PackML State Model](./docs/PackML-StateModel.png)
 
+The simulator supports the following topic and payload defintions:
+
+- Custom
+- SparkplugB v1.0
+
 ## Getting Started
 
-To start and run the PackML simulation, you'll need an MQTT server running and accessible to the image. Once available, the easiest approach is using docker to run the simulation using environmental variables to control the MQTT connection, Site, Area, and line. Once up and running, use an MQTT client to publish to .../Command/Reset and .../Command/Start to get the simulated machine into the execute state.
+To start and run the PackML simulation, you'll need an MQTT server running and accessible to the image. Once available, the easiest approach is using docker to run the simulation using environmental variables to control the MQTT connection, Site, Area, and line. Once up and running, use an MQTT client to publish to .../Command/Reset and .../Command/Start to get the simulated machine into the execute state. The default topic and payload is Custom as defined below.
 
 ### Docker
 
@@ -41,9 +46,9 @@ $ node --max-old-space-size=20 ./src/index.js
 Please allow some time in between commands to enable the machine to get to the Idle state before issuing the Start command.
 
 ```shell
-$ docker run --init -it --rm efrecon/mqtt-client pub -h broker.hivemq.com -u USERNAME -P PASSWORD -t "Site/Area/Line/Command/Reset" -m 0
+$ docker run --init -it --rm efrecon/mqtt-client pub -h broker.hivemq.com -u USERNAME -P PASSWORD -t "Site/Area/Line/Command/Reset" -m 1
 
-$ docker run --init -it --rm efrecon/mqtt-client pub -h broker.hivemq.com -u USERNAME -P PASSWORD -t "Site/Area/Line/Command/Start" -m 0
+$ docker run --init -it --rm efrecon/mqtt-client pub -h broker.hivemq.com -u USERNAME -P PASSWORD -t "Site/Area/Line/Command/Start" -m 1
 
 ```
 
@@ -67,7 +72,7 @@ The simulation consists of
 
 The simulation uses probability dice rolls to determine actions.
 
-## Interfacing
+## Interfacing via Custom Interface
 
 Interface with the virtual line via MQTT. The virtual line subscribes to `<SITE>/<AREA>/<LINE>/Command/*` (see below) and publishes information to `<SITE>/<AREA>/<LINE>/Status` and `<SITE>/<AREA>/<LINE>/Admin`. `<SITE>`, `<AREA>` and `<LINE>` are set using environmental variables.
 
@@ -150,6 +155,14 @@ Available Admin Status
 | `<SITE>/<AREA>/<LINE>/Admin/ProdDefectiveCount/*i*/Count`    | String  | Defective Counter Count since reset                       |
 | `<SITE>/<AREA>/<LINE>/Admin/ProdDefectiveCount/*i*/AccCount` | String  | Defective Counter Total Count                             |
 
+## Interfacing via SparkplugB v1.0
+
+Refer to the (Sparkplug B Payload and Topic Payload Definition Specification)[https://www.eclipse.org/tahu/spec/Sparkplug%20Topic%20Namespace%20and%20State%20ManagementV2.2-with%20appendix%20B%20format%20-%20Eclipse.pdf].
+
+### Example Publishing to Igniition v8.1.5 SCADA with Cirrus Link Modules
+
+![Ignition Sparkplug B Example](./docs/ignition-sparkplugb-example.gif)
+
 ## Environmental Variables
 
 The application is configured using the following environmental variables:
@@ -182,6 +195,22 @@ The name of the MQTT user with subscribe and publish permissions.
 
 The password for the MQTT user with subscribe and publish permissions.
 
+### MQTT_CLIENT_ID
+
+The client id to use when connecting to the broker. Defaults to hostname striped of special characters.
+
+### CLIENT_TYPE
+
+The topic and payload specification to use. Valid values are _mqtt_ and _sparkplugb_. Default to _mqtt_.
+
+### SPARKPLUG_GROUP_ID
+
+For use with Sparkplug B specifcation. Defines the group_id. Default value is the `SITE` environmental value or _PackML Simluator_ if `SITE` is not defined.
+
+### SPARKPLUG_EDGE_NODE
+
+For use with Sparkplug B specifcation. Defines the edge_node_id. Default value is the `AREA` environmental value or _site_area_line_ if `AREA` is not defined.
+
 ### TICK
 
 The tick speed of the simulation in milliseconds. This is optional. Default is 1000.
@@ -208,6 +237,15 @@ services:
       SITE: Greenville
       AREA: Packaging
       LINE: 'Line 2'
+    mem_limit: 30MB
+  
+  greenville-cnc-line1:
+    image: spruiktec/packml-simulator
+    environment:
+      SITE: Greenville
+      AREA: CNC
+      LINE: 'Line 1'
+      CLIENT_TYPE: sparkplugb
     mem_limit: 30MB
 
 ```
