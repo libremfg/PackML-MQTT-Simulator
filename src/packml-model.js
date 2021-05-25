@@ -31,6 +31,11 @@ exports.getModeIntByModeText = (mode = 'undefined') => {
   return m < 0 ? 0 : m;
 }
 
+exports.getModeTextByModeInt = (mode = 0) => {
+  mode = mode < 0 ? 0 : (mode > (MODES.length - 1) ? 0 : mode)
+  return MODES[mode]
+}
+
 exports.UnitMode = JavascripStateMachine.factory({
   init: 'undefined',
   transitions: [

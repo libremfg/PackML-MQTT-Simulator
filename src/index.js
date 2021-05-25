@@ -159,7 +159,11 @@ client.on('message', (topic, message) => {
       logger.error(`Cannot ${e.transition} from ${e.from}`)
     }
   } else if (topic.match(modeCommandTopic)) {
-    message = message.toLowerCase()
+    if (isNaN(message)) {
+      message = message.toLowerCase()
+    } else {
+      message = packmlModel.getModeTextByModeInt(message).toLowerCase()
+    }
     if (packmlModel.isUnitMode(message)) {
       mode.goto(message)
     } else {
