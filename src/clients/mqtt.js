@@ -10,6 +10,9 @@ const logger = logging.logger;
 class Client extends events.EventEmitter {
     constructor(globalConfig, initialState) {
         super()
+
+        this.globalConfig = globalConfig;
+
         this.client = mqtt.connect(
             globalConfig.MQTT_URL,
             {
@@ -20,12 +23,21 @@ class Client extends events.EventEmitter {
             }
         )
 
+        var that = this;
+
         // On Connect subscribe to Command topics
         this.client.on('connect', (packet) => {
             if (!packet.sessionPresent) {
-                client.subscribe(`${globalConfig.topicPrefix}/Command/#`)
+                const topic = `${that.globalConfig.topicPrefix}/Command/#`;
+                logger.info(`Subscribing to ${topic}`)
+                this.client.subscribe(topic)
             }
             this.emit('connect');
+        })
+
+        
+        this.client.on('message', (topic, payload) => {
+            that.emit('message', topic, payload);
         })
 
         // Emit Close

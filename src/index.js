@@ -28,7 +28,11 @@ global.config = {
   MQTT_PASSWORD: process.env.MQTT_PASSWORD || null,
   MQTT_CLIENT_ID: process.env.MQTT_CLIENT_ID || helper.getClientId(os.hostname()),
   CLIENT_TYPE: process.env.CLIENT_TYPE ? process.env.CLIENT_TYPE.toLowerCase() : 'mqtt',
-  TICK: process.env.TICK || 1000,
+  TICK: process.env.TICK || 1000
+}
+global.config = {
+  ...global.config,
+  topicPrefix: `${global.config.site}/${global.config.area}/${global.config.line}`,
   SPARKPLUG_GROUP_ID: process.env.SPARKPLUG_GROUP_ID || process.env.SITE || 'PackML Simulator',
   SPARKPLUG_EDGE_NODE: process.env.SPARKPLUG_EDGE_NODE || process.env.AREA || `${global.config.site}_${global.config.area}_${global.config.line}`,
 }
@@ -37,13 +41,12 @@ global.config = {
 global.sim = null
 
 // Initialize _random_ with site, area and line to have consistent results with the same machine.
-const topicPrefix = `${global.config.site}/${global.config.area}/${global.config.line}`
-seedRandom(topicPrefix, { global: true })
-const stateCommandTopic = new RegExp(String.raw`^${topicPrefix}\/Command\/(Start|Reset|Complete|Stop|Abort|Clear|Hold|Unhold|Suspend|Unsuspend)$`)
-const modeCommandTopic = new RegExp(String.raw`^${topicPrefix}\/Command\/(UnitMode)$`)
-const machineSpeedCommandTopic = new RegExp(String.raw`^${topicPrefix}\/Command\/MachSpeed$`)
-const packmlParameters = new RegExp(String.raw`^${topicPrefix}\/Command\/Parameter\/(\d*)\/(ID|Name|Unit|Value)$`)
-const packmlProducts = new RegExp(String.raw`^${topicPrefix}\/Command\/Product\/(\d*)\/(ProductID|ProcessParameter\/(\d*)\/(ID|Name|Unit|Value)|Ingredient\/(\d*)\/(IngredientID|Parameter\/(\d*)\/(ID|Name|Unit|Value)))$`)
+seedRandom(global.config.topicPrefix, { global: true })
+const stateCommandTopic = new RegExp(String.raw`^${global.config.topicPrefix}\/Command\/(Start|Reset|Complete|Stop|Abort|Clear|Hold|Unhold|Suspend|Unsuspend)$`)
+const modeCommandTopic = new RegExp(String.raw`^${global.config.topicPrefix}\/Command\/(UnitMode)$`)
+const machineSpeedCommandTopic = new RegExp(String.raw`^${global.config.topicPrefix}\/Command\/MachSpeed$`)
+const packmlParameters = new RegExp(String.raw`^${global.config.topicPrefix}\/Command\/Parameter\/(\d*)\/(ID|Name|Unit|Value)$`)
+const packmlProducts = new RegExp(String.raw`^${global.config.topicPrefix}\/Command\/Product\/(\d*)\/(ProductID|ProcessParameter\/(\d*)\/(ID|Name|Unit|Value)|Ingredient\/(\d*)\/(IngredientID|Parameter\/(\d*)\/(ID|Name|Unit|Value)))$`)
 
 
 // PackML State Model
@@ -60,7 +63,7 @@ var changed = (a, b, c) => {
   b = b === 'ingredientId' ? 'IngredientID' : b
   b = b === 'id' ? 'ID' : b
   b = helper.titleCase(b) // Normal Overload
-  const topic = topicPrefix + '/' + a.replace('.', '/') + b
+  const topic = global.config.topicPrefix + '/' + a.replace('.', '/') + b
   logger.info(`${topic} : ${c}`)
   client.publish(topic, c, { retain: true })
 }
@@ -107,7 +110,7 @@ tags.admin.prodDefectiveCount.push(
 // Connect to Client
 var client = null;
 switch (global.config.CLIENT_TYPE) {
-  case 'sparkplug':
+  case 'sparkplugb':
     client = new sparkplug.Client(global.config, tags);
     break;
   case 'mqtt':
