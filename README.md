@@ -262,6 +262,22 @@ For any issue, there are fundamentally three ways an individual can contribute:
 
 ## Changelog
 
+- 2.0.0
+  - Add Sparkplug B Payload and Topic Support
+  - Add CLIENT_TYPE environmental variable
+  - Add SPARKPLUG_GROUP_ID environmental variable
+  - Add SPARKPLUG_EDGE_NODE environmental variable
+  - Add MQTT_CLIENT_ID environmental variable
+  - Add TICK to global configuration
+  - Add .../Status/StateCurrentStr topic for string name of state
+  - Add .../Status/UnitModeStr topic for string name of mode
+  - Changed topic payload for .../Status/StateCurrent to integer data type (use ../Status/StateCurrentStr` instead)
+  - Changed topic payload for .../Status/UnitMode to integer data type (use ../Status/UnitModeStr` instead)
+  - Change Command tags to boolean values (integer 0/1 still works)
+  - Fix UnitMode command
+  - Updated README
+  - Bump Revision
+
 - 1.0.9
   - Update lodash library from 4.17.19 to 4.17.21
   - Update hosted-git-info from 2.8.8 to 2.8.9
