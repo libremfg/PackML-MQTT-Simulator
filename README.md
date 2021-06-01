@@ -2,22 +2,24 @@
 
 > Manufacturing line simulator interfaced using PackML over MQTT.
 
-PackML MQTT Simulator is a virtual line that interfaces using PackML implemented over MQTT. For use with the development of Industry 4.0 software solutions. The simulator implements the following PackML State model below and communicates over MQTT topics as defined by environmental variables.
+PackML MQTT Simulator is a virtual line that interfaces using PackML implemented over MQTT. For use with the development of Industry 4.0 software solutions. The simulator implements the following PackML State model below and communicates over MQTT topics as defined by environmental variables. The simulator can run with either a basic MQTT topic structure or SparkPlugB.
 
 ![PackML State Model](./docs/PackML-StateModel.png)
 
 The simulator supports the following topic and payload defintions:
 
-- [Custom](#interfacing-via-custom-interface)
+- [Basic MQTT Topic Structure](#interfacing-via-basic-mqtt-topic-structure)
 - [SparkplugB v1.0](#interfacing-via-sparkplugb-v10)
 
 ## Getting Started
 
-To start and run the PackML simulation, you'll need an MQTT server running and accessible to the image. Once available, the easiest approach is using docker to run the simulation using environmental variables to control the MQTT connection, Site, Area, and line. Once up and running, use an MQTT client to publish to .../Command/Reset and .../Command/Start to get the simulated machine into the execute state. The default topic and payload is Custom as defined below.
+To start and run the PackML simulation, you'll need an MQTT server running and accessible. Once available, the easiest approach is using docker to run the simulation using environmental variables to control the MQTT connection, Site, Area, and line.
 
 ### Docker
 
-Start your container with environmental variables
+Start your container with environmental variables.
+
+#### Basic MQTT Structure
 
 ```shell
 $ docker run -it -e SITE=Site -e AREA=Area -e LINE=Line -e MQTT_HOST=mqtt://broker.hivemq.com -m 30m spruiktec/packml-simulator
@@ -26,7 +28,22 @@ $ docker run -it -e SITE=Site -e AREA=Area -e LINE=Line -e MQTT_HOST=mqtt://brok
 2020-06-22T03:13:49.819Z | info: Site/Area/Line/Status/UnitModeCurrent : Production
 ```
 
+Once up and running, use an MQTT client to publish to .../Command/Reset and .../Command/Start to get the simulated machine into the execute state. The default topic and payload is Custom as defined below.
+
+#### SparkPlugB
+
+```shell
+$ docker run -it -e CLIENT_TYPE=sparkplugb -e SITE=Site -e AREA=Area -e LINE=Line -e MQTT_HOST=mqtt://broker.hivemq.com -m 30m spruiktec/packml-simulator
+2020-06-22T03:13:49.301Z | info: Initializing
+2020-06-22T03:13:49.817Z | info: Connected to mqtt://broker.hivemq.com:1883
+2020-06-22T03:13:49.819Z | info: Site/Area/Line/Status/UnitModeCurrent : Production
+```
+
+Once up and running, use an Sparkplug B device commands to publish to `Command.Reset` and `Command.Start` metrics to get the simulated machine into the execute state.
+
 ### Node
+
+#### Basic MQTT Structure
 
 ```shell
 $ npm i
@@ -41,7 +58,23 @@ $ node --max-old-space-size=20 ./src/index.js
 2020-06-22T03:13:49.819Z | info: Site/Area/Line/Status/UnitModeCurrent : Production
 ```
 
-### Publish Commands
+#### SparkPlugB
+
+```shell
+$ npm i
+...
+added 421 packages from 213 contributors and audited 421 packages in 12.337s
+found 0 vulnerabilities
+$ export LINE=Line
+$ export CLIENT_TYPE=sparkplugb
+
+$ node --max-old-space-size=20 ./src/index.js
+2021-06-01T20:05:30.841Z | info: Initializing
+2021-06-01T20:05:31.141Z | info: Connected to mqtt://broker.hivemq.com:1883
+2021-06-01T20:05:31.142Z | info: Site/Area/Line/Status/UnitModeCurrentStr : Production
+```
+
+### Publish Commands for Basic MQTT Structure
 
 Please allow some time in between commands to enable the machine to get to the Idle state before issuing the Start command.
 
@@ -72,9 +105,9 @@ The simulation consists of
 
 The simulation uses probability dice rolls to determine actions.
 
-## Interfacing via Custom Interface
+## interfacing via Basic MQTT Topic Structure
 
-Interface with the virtual line via MQTT. The virtual line subscribes to `<SITE>/<AREA>/<LINE>/Command/*` (see below) and publishes information to `<SITE>/<AREA>/<LINE>/Status` and `<SITE>/<AREA>/<LINE>/Admin`. `<SITE>`, `<AREA>` and `<LINE>` are set using environmental variables.
+Interface with the virtual line via the basic MQTT structure. The virtual line subscribes to `<SITE>/<AREA>/<LINE>/Command/*` (see below) and publishes information to `<SITE>/<AREA>/<LINE>/Status` and `<SITE>/<AREA>/<LINE>/Admin`. `<SITE>`, `<AREA>` and `<LINE>` are set using environmental variables.
 
 ### Commands
 
@@ -261,6 +294,11 @@ For any issue, there are fundamentally three ways an individual can contribute:
 - By helping to resolve the issue: Typically, this is done either in the form of demonstrating that the issue reported is not a problem after all, or more often, by opening a Pull Request that changes some bit of something in the simulator in a concrete and reviewable manner.
 
 ## Changelog
+
+- 2.0.1
+  - Removed unsupported device commands
+  - Update Readme
+  - Bump Revision
 
 - 2.0.0
   - Add Sparkplug B Payload and Topic Support
