@@ -114,19 +114,7 @@ class Client extends events.EventEmitter {
                     type: 'Int32'
                 },
                 {
-                    name: 'Node Control/Reboot',
-                    timestamp: timestamp,
-                    value: false,
-                    type: 'Boolean'
-                },
-                {
                     name: 'Node Control/Rebirth',
-                    timestamp: timestamp,
-                    value: false,
-                    type: 'Boolean'
-                },
-                {
-                    name: 'Node Control/Next Server',
                     timestamp: timestamp,
                     value: false,
                     type: 'Boolean'
