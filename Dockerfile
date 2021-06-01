@@ -6,7 +6,7 @@ LABEL org.opencontainers.image.authors="tom.hollingworth@spruiktec.com"
 LABEL org.opencontainers.image.source="https://github.com/Spruik/PackML-MQTT-Simulator"
 LABEL org.opencontainers.image.url="https://spruiktec.com/"
 LABEL org.opencontainers.image.vendor="Spruik Technologies LLC"
-LABEL org.opencontainers.image.version="2.0.0"
+LABEL org.opencontainers.image.version="2.0.1"
 
 WORKDIR /machine
 
