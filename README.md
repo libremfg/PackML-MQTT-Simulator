@@ -295,6 +295,12 @@ For any issue, there are fundamentally three ways an individual can contribute:
 
 ## Changelog
 
+- 2.0.2
+  - Update mqtt libary from 4.2.1 to 4.2.8
+  - Update sonarqube-scanner libary from 2.7.0 to 2.8.1
+  - Change simple switch statements for ifs
+  - Bump Revision
+
 - 2.0.1
   - Removed unsupported device commands
   - Update Readme

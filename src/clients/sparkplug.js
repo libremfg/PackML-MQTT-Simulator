@@ -52,13 +52,11 @@ class Client extends events.EventEmitter {
 
             for (const metric of payload.metrics) {
                 logger.info(`\t${metric.name} (${metric.type}) = ${metric.value}`)
-                switch (metric.name) {
-                    case 'Node Control/Rebirth':
-                        if (metric.value) {
-                            that.birthNode()
-                            that.birthDevice()
-                        }
-                        break;
+                if (metric.name === 'Node Control/Rebirth') {
+                    if (metric.value) {
+                        that.birthNode()
+                        that.birthDevice()
+                    }
                 }
             }
         });
@@ -79,13 +77,11 @@ class Client extends events.EventEmitter {
     }
 
     getType(value) {
-        switch(typeof value) {
-            case 'number':
-                if (value % 1 === 0) return 'Int32'
-                return 'Float'
-            default:
-                return typeof value
+        if (typeof value === 'number') {
+            if (value % 1 === 0) return 'Int32'
+            return 'Float'
         }
+        return typeof value
     }
 
     birthDevice() {
@@ -122,7 +118,7 @@ class Client extends events.EventEmitter {
                 {
                     name: "Properties/OS Version", 
                     timestamp: timestamp,
-                    value: "2.0.1",
+                    value: "2.0.2",
                     type: "String"
                 },
                 {
