@@ -28,13 +28,13 @@
   "license": "MIT",
   "dependencies": {
     "javascript-state-machine": "^3.1.0",
-    "mqtt": "^4.2.1",
+    "mqtt": "^4.2.8",
     "seedrandom": "^3.0.5",
     "sparkplug-client": "^3.2.2",
     "winston": "^3.3.3"
   },
   "devDependencies": {
-    "sonarqube-scanner": "^2.7.0",
+    "sonarqube-scanner": "^2.8.1",
     "standard": "^14.3.4"
   }
 }
