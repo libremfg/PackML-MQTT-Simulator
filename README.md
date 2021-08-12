@@ -22,7 +22,7 @@ Start your container with environmental variables.
 #### Basic MQTT Structure
 
 ```shell
-$ docker run -it -e SITE=Site -e AREA=Area -e LINE=Line -e MQTT_HOST=mqtt://broker.hivemq.com -m 30m spruiktec/packml-simulator
+$ docker run -it -e SITE=Site -e AREA=Area -e LINE=Line -e MQTT_URL=mqtt://broker.hivemq.com -m 30m spruiktec/packml-simulator
 2020-06-22T03:13:49.301Z | info: Initializing
 2020-06-22T03:13:49.817Z | info: Connected to mqtt://broker.hivemq.com:1883
 2020-06-22T03:13:49.819Z | info: Site/Area/Line/Status/UnitModeCurrent : Production
@@ -33,7 +33,7 @@ Once up and running, use an MQTT client to publish to .../Command/Reset and .../
 #### SparkPlugB
 
 ```shell
-$ docker run -it -e CLIENT_TYPE=sparkplugb -e SITE=Site -e AREA=Area -e LINE=Line -e MQTT_HOST=mqtt://broker.hivemq.com -m 30m spruiktec/packml-simulator
+$ docker run -it -e CLIENT_TYPE=sparkplugb -e SITE=Site -e AREA=Area -e LINE=Line -e MQTT_URL=mqtt://broker.hivemq.com -m 30m spruiktec/packml-simulator
 2020-06-22T03:13:49.301Z | info: Initializing
 2020-06-22T03:13:49.817Z | info: Connected to mqtt://broker.hivemq.com:1883
 2020-06-22T03:13:49.819Z | info: Site/Area/Line/Status/UnitModeCurrent : Production
@@ -294,6 +294,11 @@ For any issue, there are fundamentally three ways an individual can contribute:
 - By helping to resolve the issue: Typically, this is done either in the form of demonstrating that the issue reported is not a problem after all, or more often, by opening a Pull Request that changes some bit of something in the simulator in a concrete and reviewable manner.
 
 ## Changelog
+
+- 2.0.3
+  - Update path-parse from 1.0.6 to 1.0.7
+  - Change README run command env. variable MQTT_HOST to MQTT_URL
+  - Bump Revision
 
 - 2.0.2
   - Update mqtt libary from 4.2.1 to 4.2.8
