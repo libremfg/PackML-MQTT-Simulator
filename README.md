@@ -146,8 +146,8 @@ Available Status'
 
 | Topic                                                                        | Values  | Function                                                  |
 |------------------------------------------------------------------------------|---------|-----------------------------------------------------------|
-| `<SITE>/<AREA>/<LINE>/Status/StateCurrent`                                   | String  | Current PackML State as String                            |
-| `<SITE>/<AREA>/<LINE>/Status/StateCurrentStr`                                | Integer | Current PackML State                                      |
+| `<SITE>/<AREA>/<LINE>/Status/StateCurrent`                                   | String  | Current PackML State                                      |
+| `<SITE>/<AREA>/<LINE>/Status/StateCurrentStr`                                | Integer | Current PackML State as String                            |
 | `<SITE>/<AREA>/<LINE>/Status/UnitMode`                                       | Integer | Current PackML Model                                      |
 | `<SITE>/<AREA>/<LINE>/Status/UnitModeStr`                                    | String  | Current PackML Model as String                            |
 | `<SITE>/<AREA>/<LINE>/Status/CurMachSpeed`                                   | Decimal | Current Machine Speed                                     |
