@@ -250,6 +250,10 @@ For use with Sparkplug B specifcation. Defines the edge_node_id. Default value i
 
 The tick speed of the simulation in milliseconds. This is optional. Default is 1000.
 
+### PACKML_INITIAL_START_STATE
+
+Optional environment variable can be set to any valid state to start the simulator in an alternate state. When unset defaults to 'clearing' state. For example set `PACKML_INITIAL_START_STATE=starting` to have the simulated machine auto-start.
+
 ## Enterprise Simulation
 
 Use docker-compose to simulate multiple independent lines at once. E.g.

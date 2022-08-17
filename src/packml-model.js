@@ -4,7 +4,7 @@
 const JavascripStateMachine = require('javascript-state-machine')
 
 // Define initial start state here
-const INITIAL_START_STATE = 'clearing'
+const INITIAL_START_STATE = process.env.PACKML_INITIAL_START_STATE || 'clearing'
 
 const WAITING_STATES = ['stopped', 'idle', 'held', 'suspend', 'complete', 'aborted', 'execute', 'undefined']
 
