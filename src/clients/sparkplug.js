@@ -118,7 +118,7 @@ class Client extends events.EventEmitter {
                 {
                     name: "Properties/OS Version", 
                     timestamp: timestamp,
-                    value: "2.0.3",
+                    value: "2.0.4",
                     type: "String"
                 },
                 {

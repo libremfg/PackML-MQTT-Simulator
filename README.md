@@ -39,7 +39,7 @@ $ docker run -it -e CLIENT_TYPE=sparkplugb -e SITE=Site -e AREA=Area -e LINE=Lin
 2020-06-22T03:13:49.819Z | info: Site/Area/Line/Status/UnitModeCurrent : Production
 ```
 
-Once up and running, use an Sparkplug B device commands to publish to `Command.Reset` and `Command.Start` metrics to get the simulated machine into the execute state.
+Once up and running, use an Sparkplug B device commands to publish to `Command/Reset` and `Command/Start` metrics to get the simulated machine into the execute state. The topic in the above example is: `spBv1.0/Site/DCMD/Area/Line`.
 
 ### Node
 
@@ -192,7 +192,11 @@ Available Admin Status
 
 ## Interfacing via SparkplugB v1.0
 
-Refer to the [Sparkplug B Payload and Topic Payload Definition Specification](https://www.eclipse.org/tahu/spec/Sparkplug%20Topic%20Namespace%20and%20State%20ManagementV2.2-with%20appendix%20B%20format%20-%20Eclipse.pdf).
+Refer to the [Sparkplug B Payload and Topic Payload Definition Specification](https://www.eclipse.org/tahu/spec/Sparkplug%20Topic%20Namespace%20and%20State%20ManagementV2.2-with%20appendix%20B%20format%20-%20Eclipse.pdf). 
+
+The simulator creates a device and listens to the device commands message (DCMD) topic with metrics representing the available commands without the `<SITE>/<AREA>/<LINE>/` prefix. Consider the command topic `<SITE>/<AREA>/<LINE>/Command/Reset`, when writing as a SparkplugB device command message use the metric name `Command/Reset`. Publishing device command messages are published against `spBv1.0/<SPARKPLUG_GROUP_ID>/DCMD/<SPARKPLUG_EDGE_NODE>/<LINE>` based on site environmental variables.
+
+The simulator will also rebirth when requested at the node level by publishing to `spBv1.0/<SPARKPLUG_GROUP_ID>/NCMD/<SPARKPLUG_EDGE_NODE>` with a metric `Node Control/Rebirth` and a true value.
 
 Below is an example of publishing to Igniition v8.1.5 SCADA with Cirrus Link Modules. The MQTT Engine was configured with the corresponding namespace filter for the simulation environmental variables.
 
@@ -294,6 +298,14 @@ For any issue, there are fundamentally three ways an individual can contribute:
 - By helping to resolve the issue: Typically, this is done either in the form of demonstrating that the issue reported is not a problem after all, or more often, by opening a Pull Request that changes some bit of something in the simulator in a concrete and reviewable manner.
 
 ## Changelog
+
+- 2.0.4
+  - Update README
+  - Update mqtt from 4.2.8 to 4.3.8
+  - Update sonarqube-scanner from 2.8.1 to 2.9.1
+  - Update sparkplug-client from 3.2.2 to 3.2.4
+  - Update winston from 3.3.3 to 3.13.0
+  - Bump Revision
 
 - 2.0.3
   - Update path-parse from 1.0.6 to 1.0.7
