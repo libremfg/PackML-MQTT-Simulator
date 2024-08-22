@@ -20,7 +20,7 @@ logger.info('Initializing')
 global.config = {
   site: process.env.SITE || 'Site',
   area: process.env.AREA || 'Area',
-  line: process.env.LINE || os.hostname(),
+  line: process.env.LINE || 'Line',
   startOnLoad: process.env.START || false,
   MQTT_URL: process.env.MQTT_URL || 'mqtt://broker.hivemq.com',
   MQTT_PORT: process.env.MQTT_PORT || null,
