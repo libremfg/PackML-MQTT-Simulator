@@ -216,7 +216,7 @@ The ISA-95 Model area name of this line. AREA used as the second topic in the MQ
 
 ### LINE
 
-The ISA-95 model line name of this line. LINE used as the third topic in the MQTT structure. If this is unset, hostname will be used.
+The ISA-95 model line name of this line. LINE used as the third topic in the MQTT structure. If this is unset, _Line_ will be used.
 
 ### MQTT_URL
 
