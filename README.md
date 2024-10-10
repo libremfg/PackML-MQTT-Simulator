@@ -22,7 +22,7 @@ Start your container with environmental variables.
 #### Basic MQTT Structure
 
 ```shell
-$ docker run -it -e SITE=Site -e AREA=Area -e LINE=Line -e MQTT_URL=mqtt://broker.hivemq.com -m 30m spruiktec/packml-simulator
+$ docker run -it -e SITE=Site -e AREA=Area -e LINE=Line -e MQTT_URL=mqtt://broker.hivemq.com -m 30m libremfg/packml-simulator
 2020-06-22T03:13:49.301Z | info: Initializing
 2020-06-22T03:13:49.817Z | info: Connected to mqtt://broker.hivemq.com:1883
 2020-06-22T03:13:49.819Z | info: Site/Area/Line/Status/UnitModeCurrent : Production
@@ -33,7 +33,7 @@ Once up and running, use an MQTT client to publish to .../Command/Reset and .../
 #### SparkPlugB
 
 ```shell
-$ docker run -it -e CLIENT_TYPE=sparkplugb -e SITE=Site -e AREA=Area -e LINE=Line -e MQTT_URL=mqtt://broker.hivemq.com -m 30m spruiktec/packml-simulator
+$ docker run -it -e CLIENT_TYPE=sparkplugb -e SITE=Site -e AREA=Area -e LINE=Line -e MQTT_URL=mqtt://broker.hivemq.com -m 30m libremfg/packml-simulator
 2020-06-22T03:13:49.301Z | info: Initializing
 2020-06-22T03:13:49.817Z | info: Connected to mqtt://broker.hivemq.com:1883
 2020-06-22T03:13:49.819Z | info: Site/Area/Line/Status/UnitModeCurrent : Production
@@ -263,7 +263,7 @@ version: "2.4"
 
 services:
   greenville-packaging-line1:
-    image: spruiktec/packml-simulator
+    image: libremfg/packml-simulator
     environment:
       SITE: Greenville
       AREA: Packaging
@@ -271,7 +271,7 @@ services:
     mem_limit: 30MB
 
   greenville-packaging-line2:
-    image: spruiktec/packml-simulator
+    image: libremfg/packml-simulator
     environment:
       SITE: Greenville
       AREA: Packaging
@@ -279,7 +279,7 @@ services:
     mem_limit: 30MB
   
   greenville-cnc-line1:
-    image: spruiktec/packml-simulator
+    image: libremfg/packml-simulator
     environment:
       SITE: Greenville
       AREA: CNC
@@ -293,11 +293,25 @@ services:
 
 For any issue, there are fundamentally three ways an individual can contribute:
 
-- By opening the issue for discussion: For instance, if you believe that you have uncovered a bug in, creating a new issue in the [GitHub issue tracker](https://github.com/Spruik/PackML-MQTT-Simulator/issues) is the way to report it.
+- By opening the issue for discussion: For instance, if you believe that you have uncovered a bug in, creating a new issue in the [GitHub issue tracker](https://github.com/libremfg/PackML-MQTT-Simulator/issues) is the way to report it.
 - By helping to triage the issue: This can be done either by providing supporting details (a test case that demonstrates a bug), or providing suggestions on how to address the issue.
 - By helping to resolve the issue: Typically, this is done either in the form of demonstrating that the issue reported is not a problem after all, or more often, by opening a Pull Request that changes some bit of something in the simulator in a concrete and reviewable manner.
 
 ## Changelog
+
+- 2.0.5
+  - Bump Revision
+  - Change base docker image from node:12-alpine to node:20-alpine
+  - Change classes with single constructor to a function for maintainability
+  - Change multiple inline if statements to one per line for readabilty
+  - Change `var` to `const` or `let` where applicable
+  - Refactor setInterval to reduce cognitive complexity
+  - Update docker metadata
+  - Update mqtt from 4.3.8 to 5.10.1
+  - Update winston from 3.13.0 to 3.15.0
+  - Update standard from 14.3.4 to 17.1.2
+  - Update sonarqube-scanner 2.9.1 to 4.2.3
+  - Update README
 
 - 2.0.4
   - Update README

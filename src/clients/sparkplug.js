@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict'
 
-var sparkplug = require('sparkplug-client')
+const sparkplug = require('sparkplug-client')
 const helper = require('../helper');
 const { logger } = require('../logging');
 const events = require('events');
@@ -118,7 +118,7 @@ class Client extends events.EventEmitter {
                 {
                     name: "Properties/OS Version", 
                     timestamp: timestamp,
-                    value: "2.0.4",
+                    value: "2.0.5",
                     type: "String"
                 },
                 {

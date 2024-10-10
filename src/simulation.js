@@ -65,91 +65,133 @@ module.exports.simulate = (mode, state, tags, millis = 1000) => {
   // Simulation is periodically evaluated
     if (state) {
       if (state.state === 'execute') {
-        // Rate Flicker
-        const flicker = exports.weightedRandom(isCurMachSpeedFlicker)
-        if (flicker === 'flick') {
-          if (tags.status.curMachSpeed > 0.0) {
-            tags.status.curMachSpeed = tags.status.curMachSpeed + (2.5 - 5 * exports.randomBoxMuller())
-          }
-        }
-
-        // Check if wildly different from speed setpoint
-        if (Math.abs(tags.status.curMachSpeed - tags.status.machSpeed) > 0.05 * tags.admin.machDesignSpeed) {
-          // Slowly make up different
-          let extraSpeed = (tags.status.machSpeed - tags.status.curMachSpeed) * 0.1
-          extraSpeed = Math.abs(extraSpeed) > 0.05 * tags.admin.machDesignSpeed ? extraSpeed : 0.05 * tags.admin.machDesignSpeed * (extraSpeed > 0 ? 1 : -1)
-          // Check if new difference within range
-          if (Math.abs(tags.status.curMachSpeed + extraSpeed - tags.status.machSpeed) < 0.05 * tags.admin.machDesignSpeed) {
-            // Clamp to new Speed
-            tags.status.curMachSpeed = tags.status.machSpeed
-          } else {
-            // Ramp
-            tags.status.curMachSpeed = tags.status.curMachSpeed + extraSpeed
-          }
-        }
-
-        // Chance of Suspending
-        const diceRoll = exports.weightedRandom(executeAvailabilityProbabilities)
-        if (diceRoll === 'suspend') {
-          state.suspend()
-        }
+        execute(state, tags)
       } else if (state.state === 'suspended') {
-        if (tags.status.curMachSpeed !== 0.0) {
-          tags.status.curMachSpeed = 0.0
-        }
-
-        // Chance of Unsuspend
-        const diceRoll = exports.weightedRandom(executeUnspendProbabilities)
-        if (diceRoll === 'unsuspend') {
-          state.unsuspend()
-        }
+        suspended(state, tags)
       } else if (state.state === 'starting' || state.state === 'unsuspending' || state.state === 'unholding') {
-        // Ramp Up Speed
-        const s = tags.status.curMachSpeed + (tags.status.machSpeed * 1.0 / (state.transitioning._idleTimeout / 1000.0))
-        tags.status.curMachSpeed = s > tags.status.machSpeed ? tags.status.machSpeed : s
+        rampUp(state, tags)
       } else if (state.state === 'completing' || state.state === 'stopping' || state.state === 'aborting' || state.state === 'holding' || state.state === 'suspending') {
-        // Ramp Down Speed
-        const s = tags.status.curMachSpeed - (tags.status.machSpeed * 1.0 / (state.transitioning._idleTimeout / 1000.0))
-        tags.status.curMachSpeed = s < 0.0 ? 0.0 : s
+        rampDown(state, tags)
       } else if (state.state === 'stopped' || state.state === 'aborted' || state.state === 'held' || state.state === 'complete' || state.state === 'idle') {
-        // Reset Speed
-        if (tags.status.curMachSpeed !== 0.0) {
-          tags.status.curMachSpeed = 0.0
-        }
+        stop(tags)
       } else if (state.state === 'resetting') {
-        // Reset Admin Counts
-        tags.admin.prodConsumedCount.forEach((counter) => {
-          if (counter.count !== 0) {
-            counter.count = 0
-          }
-        })
-        tags.admin.prodDefectiveCount.forEach((counter) => {
-          if (counter.count !== 0) {
-            counter.count = 0
-          }
-        })
-        tags.admin.prodProcessedCount.forEach((counter) => {
-          if (counter.count !== 0) {
-            counter.count = 0
-          }
-        })
+        resetting(tags)
       }
 
       if (tags.status.curMachSpeed > 0) {
-        // Consume
-        tags.admin.prodConsumedCount[0].count += tags.status.curMachSpeed / 60.0
-        tags.admin.prodConsumedCount[0].accCount += tags.status.curMachSpeed / 60.0
-
-        // Produce
-        const diceRoll = exports.weightedRandom(executeQualityProbabilities)
-        if (diceRoll === 'good') {
-          tags.admin.prodProcessedCount[0].count += tags.status.curMachSpeed / 60.0
-          tags.admin.prodProcessedCount[0].accCount += tags.status.curMachSpeed / 60.0
-        } else {
-          tags.admin.prodDefectiveCount[0].count += tags.status.curMachSpeed / 60.0
-          tags.admin.prodDefectiveCount[0].accCount += tags.status.curMachSpeed / 60.0
-        }
+        consumeAndProduce(tags)
       }
     }
   }, millis)
 }
+
+function execute(state, tags) {
+  // Rate Flicker
+  const flicker = exports.weightedRandom(isCurMachSpeedFlicker)
+  if (flicker == 'flick') {
+    if (tags.status.curMachSpeed > 0.0) {
+      tags.status.curMachSpeed = tags.status.curMachSpeed + (2.5 - 5 * exports.randomBoxMuller())
+    }
+  }
+
+  // Check if wildly different from speed setpoint
+  if (Math.abs(tags.status.curMachSpeed - tags.status.machSpeed) > 0.05 * tags.admin.machDesignSpeed) {
+    // Slowly make up different
+    let extraSpeed = (tags.status.machSpeed - tags.status.curMachSpeed) * 0.1
+    extraSpeed = nudgeExtraSpeed(tags.admin.machDesignSpeed, extraSpeed)
+    // Check if new difference within range
+    if (Math.abs(tags.status.curMachSpeed + extraSpeed - tags.status.machSpeed) < 0.05 * tags.admin.machDesignSpeed) {
+      // Clamp to new Speed
+      tags.status.curMachSpeed = tags.status.machSpeed
+    } else {
+      // Ramp
+      tags.status.curMachSpeed = tags.status.curMachSpeed + extraSpeed
+    }
+  }
+
+  // Chance of Suspending
+  const diceRoll = exports.weightedRandom(executeAvailabilityProbabilities)
+  if (diceRoll == 'suspend') {
+    state.suspend()
+  }
+}
+
+function suspended(state, tags){
+  if (tags.status.curMachSpeed !== 0.0) {
+    tags.status.curMachSpeed = 0.0
+  }
+
+  // Chance of Unsuspend
+  const diceRoll = exports.weightedRandom(executeUnspendProbabilities)
+  if (diceRoll == 'unsuspend') {
+    state.unsuspend()
+  }
+}
+
+function rampUp(state, tags){
+  // Ramp Up Speed
+  const s = tags.status.curMachSpeed + (tags.status.machSpeed * 1.0 / (state.transitioning._idleTimeout / 1000.0))
+  tags.status.curMachSpeed = s > tags.status.machSpeed ? tags.status.machSpeed : s
+}
+
+function rampDown(state, tags){
+  // Ramp Down Speed
+  const s = tags.status.curMachSpeed - (tags.status.machSpeed * 1.0 / (state.transitioning._idleTimeout / 1000.0))
+  tags.status.curMachSpeed = s < 0.0 ? 0.0 : s
+}
+
+function stop(tags){
+  // Reset Speed
+  if (tags.status.curMachSpeed !== 0.0) {
+    tags.status.curMachSpeed = 0.0
+  }
+}
+
+function resetting(tags){
+  // Reset Admin Counts
+  tags.admin.prodConsumedCount.forEach((counter) => {
+    if (counter.count !== 0) {
+      counter.count = 0
+    }
+  })
+  tags.admin.prodDefectiveCount.forEach((counter) => {
+    if (counter.count !== 0) {
+      counter.count = 0
+    }
+  })
+  tags.admin.prodProcessedCount.forEach((counter) => {
+    if (counter.count !== 0) {
+      counter.count = 0
+    }
+  })
+}
+
+function consumeAndProduce(tags) {
+  // Consume
+  tags.admin.prodConsumedCount[0].count += tags.status.curMachSpeed / 60.0
+  tags.admin.prodConsumedCount[0].accCount += tags.status.curMachSpeed / 60.0
+
+  // Produce
+  const diceRoll = exports.weightedRandom(executeQualityProbabilities)
+  if (diceRoll == 'good') {
+    tags.admin.prodProcessedCount[0].count += tags.status.curMachSpeed / 60.0
+    tags.admin.prodProcessedCount[0].accCount += tags.status.curMachSpeed / 60.0
+  } else {
+    tags.admin.prodDefectiveCount[0].count += tags.status.curMachSpeed / 60.0
+    tags.admin.prodDefectiveCount[0].accCount += tags.status.curMachSpeed / 60.0
+  }
+}
+
+function nudgeExtraSpeed(machDesignSpeed, extraSpeed) {
+  const closeEnough = 0.05 * machDesignSpeed;
+  if (Math.abs(extraSpeed) > closeEnough) {
+    return extraSpeed
+  }
+  
+  // Check if increaing or decreasing
+  if (extraSpeed > 0) {
+    return 0.05 * machDesignSpeed // Increaseing
+  }
+  return 0.05 * machDesignSpeed * -1 // Decreasing
+}
+  
