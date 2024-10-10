@@ -22,7 +22,9 @@ exports.getStateIntByStateText = (state = 'undefined') => {
 }
 
 exports.getStateTextByStateInt = (state = 0) => {
-  state = state < 0 ? 0 : (state > 17 ? 0 : state)
+  if (state < 0 || state > 17) {
+    state = 0
+  }
   return STATES[state]
 }
 
@@ -32,7 +34,9 @@ exports.getModeIntByModeText = (mode = 'undefined') => {
 }
 
 exports.getModeTextByModeInt = (mode = 0) => {
-  mode = mode < 0 ? 0 : (mode > (MODES.length - 1) ? 0 : mode)
+  if (mode < 0 || mode > (MODES.length - 1)) {
+    mode = 0
+  }
   return MODES[mode]
 }
 

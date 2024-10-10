@@ -1,6 +1,6 @@
 {
   "name": "packaging-machine-language-mqtt-simulator",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Manufacturing line simulator interfaced using PackML over MQTT.",
   "keywords": [
     "packml",
@@ -8,33 +8,33 @@
     "simulation",
     "manufacturing"
   ],
-  "homepage": "https://github.com/Spruik/PackML-MQTT-Simulator#readme",
+  "homepage": "https://github.com/libremfg/PackML-MQTT-Simulator#readme",
   "bugs": {
-    "url": "https://github.com/Spruik/PackML-MQTT-Simulator/issues",
-    "email": "info@spruiktec.com"
+    "url": "https://github.com/libremfg/PackML-MQTT-Simulator/issues",
+    "email": "info@rhize.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Spruik/PackML-MQTT-Simulator"
+    "url": "https://github.com/libremfg/PackML-MQTT-Simulator"
   },
   "main": "./src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "style": "standard",
     "quality": "sonar-scanner",
-    "build": "docker build . -t spruiktec/packml-simulator"
+    "build": "docker build . -t libremfg/packml-simulator"
   },
-  "author": "Spruik Technologies",
+  "author": "Libre Technologies Inc",
   "license": "MIT",
   "dependencies": {
     "javascript-state-machine": "^3.1.0",
-    "mqtt": "^4.3.8",
+    "mqtt": "^5.10.1",
     "seedrandom": "^3.0.5",
     "sparkplug-client": "^3.2.4",
-    "winston": "^3.13.0"
+    "winston": "^3.15.0"
   },
   "devDependencies": {
-    "sonarqube-scanner": "^2.9.1",
-    "standard": "^14.3.4"
+    "sonarqube-scanner": "^4.2.3",
+    "standard": "^17.1.2"
   }
 }

@@ -1,6 +1,6 @@
 replicaCount: 3 
 image:
-  repository: spruiktec/packml-simulator
+  repository: libremfg/packml-simulator
   pullPolicy: IfNotPresent
 
 config:

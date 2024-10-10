@@ -13,194 +13,153 @@ const COUNT_TYPES = [
   module.exports.COUNT_TYPE.PROCESSED
 ]
 
-class Warning {
-  constructor () {
-    this.trigger = false
-    this.id = 0
-    this.value = 0
+function Warning() {
+  return {
+    trigger: false,
+    id: 0,
+    value: 0
   }
 }
 
-class StopReason {
-  constructor () {
-    this.id = 0
-    this.value = 0
+function StopReason() {
+  return {
+    id: 0,
+    value: 0 
   }
 }
 
-class EquipmentInterlock {
-  contructor () {
-    this.blocked = false
-    this.starved = false
+function EquipmentInterlock() {
+  return {
+    blocked: false,
+    starved: false
   }
 }
 
-class Parameter {
-  constructor (index, productIndex) {
-    if (index === undefined || index === null) {
-      throw TypeError('Must construct a Parameter with an index')
-    }
-    this._index = index
-    if (productIndex !== undefined && productIndex !== null) {
-      this._productIndex = productIndex
-    } else {
-      this._productIndex = null
-    }
-    this.id = 0
-    this.name = ''
-    this.unit = ''
-    this.value = 0.0
+function Parameter(index ,productIndex) {
+  if (index === undefined || index === null) {
+    throw TypeError('Must construct a Parameter with an index')
+  }
+  return {
+    _index: index,
+    _productIndex: productIndex !== undefined && productIndex !== null ? productIndex : null,
+    id: 0,
+    name: '',
+    unit: '',
+    value: 0.0
   }
 }
 
-class Ingredient {
-  constructor (index, productIndex) {
-    if (index === undefined || index === null) {
-      throw TypeError('Must construct a Parameter with an index')
-    }
-    this._index = index
-    if (productIndex !== undefined && productIndex !== null) {
-      this._productIndex = productIndex
-    } else {
-      this._productIndex = null
-    }
-    this.ingredientId = 0
-    this.parameter = []
+function Ingredient(index, productIndex) {
+  if (index === undefined || index === null) {
+    throw TypeError('Must construct a Parameter with an index')
+  }
+  return {
+    _index: index,
+    _productIndex: productIndex !== undefined && productIndex !== null ? productIndex : null,
+    ingredientId: 0,
+    parameter: []
   }
 }
 
-class Product {
-  constructor (index) {
+function Product(index) {
     if (index === undefined || index === null) {
       throw TypeError('Must construct a Prodct with an index')
     }
-    this._index = index
-    this.productId = 0
-    this.parameter = []
-    this.ingredient = []
+    return {
+      _index: index,
+      productId: 0,
+      parameter: [],
+      ingredient: []
+    }
+}
+
+function Count(index, type) {
+  if (Number.isNaN(index) && index >= 0) {
+    throw TypeError('Must construct a Count with an Index')
+  }
+  if (COUNT_TYPES.indexOf(type) < 0) {
+    throw TypeError('Unknown counter type')
+  }
+  return {
+    index: index,
+    type: type,
+    id: 0,
+    name: '',
+    unit: '',
+    count: 0,
+    accCount: 0
   }
 }
 
-class Count {
-  constructor (index, type) {
-    if (Number.isNaN(index) && index >= 0) {
-      throw TypeError('Must construct a Count with an Index')
-    }
-    if (COUNT_TYPES.indexOf(type) < 0) {
-      throw TypeError('Unknown counter type')
-    }
-    this.index = index
-    this.type = type
-    this.id = 0
-    this.name = ''
-    this.unit = ''
-    this.count = 0
-    this.accCount = 0
-  }
-}
-
-class Status {
-  constructor (changed) {
-    this.equipmentInterlock = new Proxy(new EquipmentInterlock(), {
+function Status(changed) {
+  return {
+    stateCurrent: 0,
+    stateCurrentStr: '',
+    unitModeCurrent: 0,
+    unitModeCurrentStr: '',
+    machSpeed: 0.0,
+    curMachSpeed: 0.0,
+    parameter: [],
+    remoteInterface: [],
+    product: [],
+    equipmentInterlock: new Proxy(EquipmentInterlock(), {
       set (target, prop, value) {
         changed('Status/EquipmentInterlock/', prop, value)
         return Reflect.set(...arguments)
       }
     })
-    this.stateCurrent = 0
-    this.stateCurrentStr = ''
-    this.unitModeCurrent = 0
-    this.unitModeCurrentStr = ''
-    this.machSpeed = 0.0
-    this.curMachSpeed = 0.0
-    this.parameter = []
-    this.remoteInterface = []
-    this.product = []
-    this.equipmentInterlock = new EquipmentInterlock()
   }
 }
 
-class Admin {
-  constructor (changed) {
-    this.warning = new Proxy([], {
-      set (target, prop, value) {
-        changed('Admin/Warning/', prop, value)
-        return Reflect.set(...arguments)
-      }
-    })
-    this.prodDefectiveCount = new Proxy([], {
-      set (target, prop, value) {
-        changed('Admin/ProdDefectiveCount/', prop, value)
-        return Reflect.set(...arguments)
-      }
-    })
-    this.prodProcessedCount = new Proxy([], {
-      set (target, prop, value) {
-        changed('Admin/ProdProcessedCount/', prop, value)
-        return Reflect.set(...arguments)
-      }
-    })
-    this.prodConsumedCount = new Proxy([], {
-      set (target, prop, value) {
-        changed('Admin/ProdConsumedCount/', prop, value)
-        return Reflect.set(...arguments)
-      }
-    })
-    this.stopReason = new Proxy(new StopReason(), {
-      set (target, prop, value) {
-        changed('Admin/StopReason/', prop, value)
-        return Reflect.set(...arguments)
-      }
-    })
-    this.warning = []
-    this.machDesignSpeed = 0.0
-    this.prodDefectiveCount = []
-    this.prodProcessedCount = []
-    this.prodConsumedCount = []
-    this.stopReason = new StopReason()
+function Admin(changed) {
+  return {
+    machDesignSpeed: 0.0,
+    warning: [],
+    prodDefectiveCount: [],
+    prodProcessedCount: [],
+    prodConsumedCount:  [],
+    stopReason: StopReason(),
   }
 }
 
-class Command {
-  constructor () {
-    this.cntrlCmd = 0
-    this.parameter = []
-    this.product = []
-    this.remoteInterface = []
-    this.unitMode = 0
-    this.unitModeChangeRequest = false
-    this.machSpeed = 0.0
-    this.cmdChangeRequest = false
-    this.start = false
-    this.reset = false
-    this.complete = false
-    this.stop = false
-    this.abort = false
-    this.clear = false
-    this.hold = false
-    this.unhold = false
-    this.suspend = false
-    this.unsuspend = false
+function Command() {
+  return {
+    cntrlCmd: 0,
+    parameter: [],
+    product: [],
+    remoteInterface: [],
+    unitMode: 0,
+    unitModeChangeRequest: false,
+    machSpeed: 0.0,
+    cmdChangeRequest: false,
+    start: false,
+    reset: false,
+    complete: false,
+    stop: false,
+    abort: false,
+    clear: false,
+    hold: false,
+    unhold: false,
+    suspend: false,
+    unsuspend: false,
   }
 }
 
-class PackmlTags {
-  constructor (changed) {
-    this.admin = new Proxy(new Admin(changed), {
+function PackmlTags(changed){
+  return {
+    admin: new Proxy(Admin(changed), {
       set (target, prop, value) {
         changed('Admin/', prop, value)
         return Reflect.set(...arguments)
       }
-    })
-
-    this.status = new Proxy(new Status(changed), {
+    }),
+    status: new Proxy(Status(changed), {
       set (target, prop, value) {
         changed('Status/', prop, value)
         return Reflect.set(...arguments)
       }
-    })
-
-    this.command = new Command()
+    }),
+    command: Command()
   }
 }
 

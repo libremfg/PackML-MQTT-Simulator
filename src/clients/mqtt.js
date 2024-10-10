@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict'
 
-var mqtt = require('mqtt');
+const mqtt = require('mqtt');
 const events = require('events');
 const logging = require('../logging')
 
@@ -23,7 +23,7 @@ class Client extends events.EventEmitter {
             }
         )
 
-        var that = this;
+        let that = this;
 
         // On Connect subscribe to Command topics
         this.client.on('connect', (packet) => {

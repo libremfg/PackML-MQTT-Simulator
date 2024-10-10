@@ -3,7 +3,7 @@
 
 exports.titleCase = (str) => {
   str = str.split(' ')
-  for (var i = 0; i < str.length; i++) {
+  for (let i = 0; i < str.length; i++) {
     str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1)
   }
   return str.join(' ')
@@ -22,14 +22,14 @@ exports.getClientId = (hostname) => {
 }
 
 exports.flattenObject = (ob) => {
-  var toReturn = {};
+  let toReturn = {};
 
-    for (var i in ob) {
+    for (let i in ob) {
         if (!ob.hasOwnProperty(i)) continue;
 
         if ((typeof ob[i]) == 'object' && ob[i] !== null) {
-            var flatObject = this.flattenObject(ob[i]);
-            for (var x in flatObject) {
+          let flatObject = this.flattenObject(ob[i]);
+            for (let x in flatObject) {
                 if (!flatObject.hasOwnProperty(x)) continue;
                 const index = i.replace(/^./, i[0].toUpperCase())
                 toReturn[index + '/' + x] = flatObject[x];
