@@ -22,7 +22,7 @@ Start your container with environmental variables.
 #### Basic MQTT Structure
 
 ```shell
-$ docker run -it -e SITE=Site -e AREA=Area -e LINE=Line -e MQTT_URL=mqtt://broker.hivemq.com -m 30m libremfg/packml-simulator
+$ docker run -it -e SITE=Site -e AREA=Area -e LINE=Line -e MQTT_URL=mqtt://broker.hivemq.com -m 30m ghcr.io/libremfg/packml-simulator
 2020-06-22T03:13:49.301Z | info: Initializing
 2020-06-22T03:13:49.817Z | info: Connected to mqtt://broker.hivemq.com:1883
 2020-06-22T03:13:49.819Z | info: Site/Area/Line/Status/UnitModeCurrent : Production
@@ -33,7 +33,7 @@ Once up and running, use an MQTT client to publish to .../Command/Reset and .../
 #### SparkPlugB
 
 ```shell
-$ docker run -it -e CLIENT_TYPE=sparkplugb -e SITE=Site -e AREA=Area -e LINE=Line -e MQTT_URL=mqtt://broker.hivemq.com -m 30m libremfg/packml-simulator
+$ docker run -it -e CLIENT_TYPE=sparkplugb -e SITE=Site -e AREA=Area -e LINE=Line -e MQTT_URL=mqtt://broker.hivemq.com -m 30m ghcr.io/libremfg/packml-simulator
 2020-06-22T03:13:49.301Z | info: Initializing
 2020-06-22T03:13:49.817Z | info: Connected to mqtt://broker.hivemq.com:1883
 2020-06-22T03:13:49.819Z | info: Site/Area/Line/Status/UnitModeCurrent : Production
@@ -263,7 +263,7 @@ version: "2.4"
 
 services:
   greenville-packaging-line1:
-    image: libremfg/packml-simulator
+    image: ghcr.io/libremfg/packml-simulator
     environment:
       SITE: Greenville
       AREA: Packaging
@@ -271,7 +271,7 @@ services:
     mem_limit: 30MB
 
   greenville-packaging-line2:
-    image: libremfg/packml-simulator
+    image: ghcr.io/libremfg/packml-simulator
     environment:
       SITE: Greenville
       AREA: Packaging
@@ -279,7 +279,7 @@ services:
     mem_limit: 30MB
   
   greenville-cnc-line1:
-    image: libremfg/packml-simulator
+    image: ghcr.io/libremfg/packml-simulator
     environment:
       SITE: Greenville
       AREA: CNC

@@ -22,7 +22,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "style": "standard",
     "quality": "sonar-scanner",
-    "build": "docker build . -t libremfg/packml-simulator"
+    "build": "docker build . -t ghcr.io/libremfg/packml-simulator"
   },
   "author": "Libre Technologies Inc",
   "license": "MIT",
