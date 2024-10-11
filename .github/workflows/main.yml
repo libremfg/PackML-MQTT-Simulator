@@ -14,7 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Publish to GitHub Container Registry
-      if: ${{ github.github_ref_type}} == 'tag'
+      if: ${{ github.ref_type == 'tag' }}
       uses: docker/build-push-action@v6
       with:
         username: ${{ secrets.GITHUB_ACTOR }}
@@ -22,8 +22,8 @@ jobs:
         tags: |
           ghcr.io/libremfg/packml-simulator:${{ github.ref_name }}
           ghcr.io/libremfg/packml-simulator:latest
-    - name: Publish to GitHub Container Registry
-      if: ${{ github.github_ref_type}} == 'branch'
+    - name: Publish to GitHub Container Registry on Branch
+      if: ${{ github.ref_type == 'branch' }}
       uses: docker/build-push-action@v6
       with:
         username: ${{ secrets.GITHUB_ACTOR }}
