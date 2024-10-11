@@ -3,4 +3,4 @@ name: packml-sim
 description: PackML Machine Simulator
 type: application
 version: 0.0.2
-appVersion: 2.0.5
+appVersion: 2.0.6
