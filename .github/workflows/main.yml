@@ -13,12 +13,16 @@ jobs:
       packages: write
     steps:
     - uses: actions/checkout@master
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ secrets.GITHUB_ACTOR }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     - name: Publish to GitHub Container Registry
       if: ${{ github.ref_type == 'tag' }}
       uses: docker/build-push-action@v6
       with:
-        username: ${{ secrets.GITHUB_ACTOR }}
-        password: ${{ secrets.GITHUB_TOKEN }}
         push: true
         tags: |
           ghcr.io/libremfg/packml-simulator:${{ github.ref_name }}
@@ -27,8 +31,6 @@ jobs:
       if: ${{ github.ref_type == 'branch' }}
       uses: docker/build-push-action@v6
       with:
-        username: ${{ secrets.GITHUB_ACTOR }}
-        password: ${{ secrets.GITHUB_TOKEN }}
         push: true
         tags: |
           ghcr.io/libremfg/packml-simulator:test
