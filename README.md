@@ -299,6 +299,12 @@ For any issue, there are fundamentally three ways an individual can contribute:
 
 ## Changelog
 
+- 2.0.6
+  - Fix host reference on shutdown
+  - Change to GitHub Container Registry
+  - Update CI/CD to build to GitHub Container Registry
+  - Bump Revision
+
 - 2.0.5
   - Bump Revision
   - Change base docker image from node:12-alpine to node:20-alpine

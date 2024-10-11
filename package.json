@@ -1,6 +1,6 @@
 {
   "name": "packaging-machine-language-mqtt-simulator",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "description": "Manufacturing line simulator interfaced using PackML over MQTT.",
   "keywords": [
     "packml",
