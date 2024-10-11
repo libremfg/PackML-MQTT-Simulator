@@ -121,7 +121,7 @@ switch (global.config.CLIENT_TYPE) {
 }
 
 client.on('connect', (packet) => {
-  logger.info(`Connected to ${client.options().href || global.config.MQTT_URL}:${client.options().port}`)
+  logger.info(`Connected to ${client.options().href || client.options().host || global.config.MQTT_URL}:${client.options().port}`)
   state.observe('onEnterState', (lifecycle) => {
     const stateCurrent = helper.titleCase(lifecycle.to)
     logger.debug(`Entering State ${stateCurrent}`)
@@ -139,7 +139,7 @@ client.on('connect', (packet) => {
 })
 
 client.on('close', () => { 
-  logger.info(`Disconnected from ${client.options().href || globalConfig.MQTT_URL}:${client.options().port}`) 
+  logger.info(`Disconnected from ${client.options().href || client.globalConfig.MQTT_URL}:${client.options().port}`) 
 })
 
 // Handle PackML Commands
