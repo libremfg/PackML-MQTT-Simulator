@@ -63,7 +63,7 @@ function Ingredient(index, productIndex) {
 
 function Product(index) {
     if (index === undefined || index === null) {
-      throw TypeError('Must construct a Prodct with an index')
+      throw TypeError('Must construct a Product with an index')
     }
     return {
       _index: index,
