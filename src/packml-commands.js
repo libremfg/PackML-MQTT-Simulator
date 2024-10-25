@@ -25,7 +25,7 @@ exports.stateCommand = (logger, topic, message, state, stateCommandTopic) => {
 // handle mode commands
 exports.modeCommand = (logger, message, mode) => {
   if (isNaN(message)) {
-    message = message.toLowerCase()
+    message = message.toString().toLowerCase()
   } else {
     message = packmlModel.getModeTextByModeInt(message).toLowerCase()
   }
