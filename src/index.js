@@ -47,7 +47,7 @@ const stateCommandTopic = new RegExp(String.raw`^${global.config.topicPrefix}\/C
 const modeCommandTopic = new RegExp(String.raw`^${global.config.topicPrefix}\/Command\/(UnitMode)$`)
 const machineSpeedCommandTopic = new RegExp(String.raw`^${global.config.topicPrefix}\/Command\/MachSpeed$`)
 const packmlParameters = new RegExp(String.raw`^${global.config.topicPrefix}\/Command\/Parameter\/(\d*)\/(ID|Name|Unit|Value)$`)
-const packmlProducts = new RegExp(String.raw`^${global.config.topicPrefix}\/Command\/Product\/(\d*)\/(ProductID|ProcessParameter\/(\d*)\/(ID|Name|Unit|Value)|Ingredient\/(\d*)\/(IngredientID|Parameter\/(\d*)\/(ID|Name|Unit|Value)))$`)
+const packmlProducts = new RegExp(String.raw`^${global.config.topicPrefix}\/Command\/Product\/(\d*)\/(ID|ProcessParameter\/(\d*)\/(ID|Name|Unit|Value)|Ingredient\/(\d*)\/(ID|Parameter\/(\d*)\/(ID|Name|Unit|Value)))$`)
 
 // PackML State Model
 let state = new packmlModel.StateMachine()
