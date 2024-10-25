@@ -5,6 +5,7 @@
 const logging = require('./logging')
 const packmlModel = require('./packml-model')
 const packmlTags = require('./packml-tags')
+const packmlCommands = require('./packml-commands')
 const simulation = require('./simulation')
 const helper = require('./helper')
 const mqtt = require('./clients/mqtt');
@@ -145,15 +146,15 @@ client.on('close', () => {
 // Handle PackML Commands
 client.on('message', (topic, message) => {
   if (topic.match(stateCommandTopic)) {
-    stateCommand(topic, message, state)
+    packmlCommands.stateCommand(logger, topic, message, state, stateCommandTopic)
   } else if (topic.match(modeCommandTopic)) {
-    modeCommand(topic, message, mode)
+    packmlCommands.modeCommand(logger, message, mode)
   } else if (topic.match(machineSpeedCommandTopic)) {
-    machineSpeedCommand(topic, message, tags)
+    packmlCommands.machineSpeedCommand(logger, topic, message, tags)
   } else if (topic.match(packmlParameters)) {
-    parameterCommand(topic, message, tags)
+    packmlCommands.parameterCommand(logger, topic, message, tags, packmlParameters, changed)
   } else if (topic.match(packmlProducts)) {
-    productCommand(topic, message, tags)
+    packmlCommands.productCommand(logger, topic, message, tags, packmlProducts, changed)
   } else {
     logger.debug(`No handle defined for ${topic}`)
   }

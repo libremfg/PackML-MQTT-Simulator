@@ -1,8 +1,13 @@
 #!/usr/bin/env node
 'use strict'
 
+// Imports
+const packmlModel = require('./packml-model')
+const packmlTags = require('./packml-tags')
+const helper = require('./helper')
+
 // handle state commands
-function stateCommand(topic, message, state) {
+exports.stateCommand = (logger, topic, message, state, stateCommandTopic) => {
   // State Commands
   const command = topic.match(stateCommandTopic)[1]
   try {
@@ -18,7 +23,7 @@ function stateCommand(topic, message, state) {
 }
 
 // handle mode commands
-function modeCommand(message, mode) {
+exports.modeCommand = (logger, message, mode) => {
   if (isNaN(message)) {
     message = message.toLowerCase()
   } else {
@@ -27,12 +32,12 @@ function modeCommand(message, mode) {
   if (packmlModel.isUnitMode(message)) {
     mode.goto(message)
   } else {
-    logger.error('Cannot change to unknown UnitMode')
+    logger.error(`Cannot change to unknown UnitMode: ${message}`)
   }
 }
 
 // handle machine speed commands
-function machineSpeedCommand(topic, message, tags) {
+exports.machineSpeedCommand = (logger, topic, message, tags) => {
   if (Number.isNaN(message)) {
       logger.error(`Bad request: ${topic} Must be an number`)
       return
@@ -46,7 +51,7 @@ function machineSpeedCommand(topic, message, tags) {
 }
 
 // handle parameter commands
-function parameterCommand(topic, message, tags) {
+exports.parameterCommand = (logger, topic, message, tags, packmlParameters, changed) => {
   // Parameters
   const bits = topic.match(packmlParameters)
   const index = parseInt(bits[1])
@@ -81,25 +86,25 @@ function parameterCommand(topic, message, tags) {
 }
 
 // handle product commands
-function productCommand(topic, message, tags) {
+exports.productCommand = (logger, topic, message, tags, packmlProducts, changed) => {
   // Products
   const bits = topic.match(packmlProducts).filter(match => match !== undefined)
   const index = parseInt(bits[1])
   if (bits.length === 3) {
-    productCommandForProduct(index, topic, message, tags)
+    productCommandForProduct(logger, index, topic, message, tags, changed)
   } else if (bits.length === 5) {
     const nextIndex = bits[3]
     if (bits[0].indexOf('Ingredient')) {
-      productCommandForIngredient(nextIndex, message, tags)
+      productCommandForIngredient(nextIndex, bits, message, tags, index)
     } else {
-      productCommandForProductParameter(nextIndex, bits, topic, message, tags)
+      productCommandForProductParameter(logger, nextIndex, bits, topic, message, tags, changed)
     }
   } else if (bits.length === 7) {
-    productCommandForIngredientParameter(bits, topic, message, tags)
+    productCommandForIngredientParameter(logger, bits, topic, message, tags, changed)
   }
 }
 
-function productCommandForProduct(index, topic, message, tags) {
+function productCommandForProduct(logger, index, topic, message, tags, changed) {
   while (tags.status.product.length <= index) {
     tags.status.product.push(new Proxy(new packmlTags.Product(tags.status.product.length), {
       set (target, prop, value) {
@@ -117,17 +122,17 @@ function productCommandForProduct(index, topic, message, tags) {
   tags.status.product[index].productId = message
 }
 
-function productCommandForIngredient(nextIndex, message, tags) {
+function productCommandForIngredient(nextIndex, bits, message, tags, index) {
   while (tags.status.product.length <= index) {
-    tags.status.product.push(new packmlTags.Product())
+    tags.status.product.push(new packmlTags.Product(tags.status.product.length))
   }
   while (tags.status.product[index].ingredient.length <= nextIndex) {
-    tags.status.product[index].ingredient.push(new packmlTags.Ingredient())
+    tags.status.product[index].ingredient.push(new packmlTags.Ingredient(tags.status.product[index].ingredient.length))
   }
   tags.status.product[index].ingredient[nextIndex][helper.camelCase(bits[4])] = parseInt(message)
 }
 
-function productCommandForProductParameter(nextIndex, bits, topic, message, tags) {
+function productCommandForProductParameter(logger, nextIndex, bits, topic, message, tags, changed) {
   if (bits[4] === 'ID') {
     message = parseInt(message)
     if (isNaN(message)) {
@@ -142,7 +147,7 @@ function productCommandForProductParameter(nextIndex, bits, topic, message, tags
     }
   }
   while (tags.status.product.length <= index) {
-    tags.status.product.push(new packmlTags.Product())
+    tags.status.product.push(new packmlTags.Product(tags.status.product.length))
   }
   while (tags.status.product[index].processParameter.length <= nextIndex) {
     tags.status.product[index].processParameter.push(new packmlTags.Parameter(tags.status.product[index].processParameter.length), {
@@ -155,7 +160,7 @@ function productCommandForProductParameter(nextIndex, bits, topic, message, tags
   tags.status.product[index].processParameter[nextIndex][helper.camelCase(bits[4])] = message
 }
 
-function productCommandForIngredientParameter(bits, topic, message, tags) {
+function productCommandForIngredientParameter(logger, bits, topic, message, tags, changed) {
   const ingredientIndex = parseInt(bits[2])
   const parameterIndex = parseInt(bits[5])
   if (bits[6] === 'ID') {
@@ -172,18 +177,18 @@ function productCommandForIngredientParameter(bits, topic, message, tags) {
     }
   }
   while (tags.status.product.length <= index) {
-    tags.status.product.push(new packmlTags.Product())
+    tags.status.product.push(new packmlTags.Product(tags.status.product.length))
   }
   while (tags.status.product[index].ingredient.length <= ingredientIndex) {
-    tags.status.product[index].ingredient.push(new packmlTags.Parameter(), {
+    tags.status.product[index].ingredient.push(new packmlTags.Parameter(tags.status.product[index].ingredient.length, index), {
       set (target, prop, value) {
         changed('Status/Product/' + index + '/Ingredient/' + tags.status.product[index].ingredient.length - 1 + '/', prop, value)
         return Reflect.set(...arguments)
       }
     })
   }
-  while (tags.status.product[index].ingredient[ingredientIndex].parameter <= parameterIndex) {
-    tags.status.product[index].ingredient[ingredientIndex].parameter.push(new packmlTags.Parameter())
+  while (tags.status.product[index].ingredient[ingredientIndex].parameter.length <= parameterIndex) {
+    tags.status.product[index].ingredient[ingredientIndex].parameter.push(new packmlTags.Parameter(tags.status.product[index].ingredient[ingredientIndex].parameter.length))
   }
   tags.status.product[index].ingredient[ingredientIndex].parameter[parameterIndex][helper.camelCase(bits[6])] = message
 }
