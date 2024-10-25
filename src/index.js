@@ -5,6 +5,7 @@
 const logging = require('./logging')
 const packmlModel = require('./packml-model')
 const packmlTags = require('./packml-tags')
+const packmlCommands = require('./packml-commands')
 const simulation = require('./simulation')
 const helper = require('./helper')
 const mqtt = require('./clients/mqtt');
@@ -46,7 +47,7 @@ const stateCommandTopic = new RegExp(String.raw`^${global.config.topicPrefix}\/C
 const modeCommandTopic = new RegExp(String.raw`^${global.config.topicPrefix}\/Command\/(UnitMode)$`)
 const machineSpeedCommandTopic = new RegExp(String.raw`^${global.config.topicPrefix}\/Command\/MachSpeed$`)
 const packmlParameters = new RegExp(String.raw`^${global.config.topicPrefix}\/Command\/Parameter\/(\d*)\/(ID|Name|Unit|Value)$`)
-const packmlProducts = new RegExp(String.raw`^${global.config.topicPrefix}\/Command\/Product\/(\d*)\/(ProductID|ProcessParameter\/(\d*)\/(ID|Name|Unit|Value)|Ingredient\/(\d*)\/(IngredientID|Parameter\/(\d*)\/(ID|Name|Unit|Value)))$`)
+const packmlProducts = new RegExp(String.raw`^${global.config.topicPrefix}\/Command\/Product\/(\d*)\/(ID|ProcessParameter\/(\d*)\/(ID|Name|Unit|Value)|Ingredient\/(\d*)\/(ID|Parameter\/(\d*)\/(ID|Name|Unit|Value)))$`)
 
 // PackML State Model
 let state = new packmlModel.StateMachine()
@@ -145,15 +146,15 @@ client.on('close', () => {
 // Handle PackML Commands
 client.on('message', (topic, message) => {
   if (topic.match(stateCommandTopic)) {
-    stateCommand(topic, message, state)
+    packmlCommands.stateCommand(logger, topic, message, state, stateCommandTopic)
   } else if (topic.match(modeCommandTopic)) {
-    modeCommand(topic, message, mode)
+    packmlCommands.modeCommand(logger, message, mode)
   } else if (topic.match(machineSpeedCommandTopic)) {
-    machineSpeedCommand(topic, message, tags)
+    packmlCommands.machineSpeedCommand(logger, topic, message, tags)
   } else if (topic.match(packmlParameters)) {
-    parameterCommand(topic, message, tags)
+    packmlCommands.parameterCommand(logger, topic, message, tags, packmlParameters, changed)
   } else if (topic.match(packmlProducts)) {
-    productCommand(topic, message, tags)
+    packmlCommands.productCommand(logger, topic, message, tags, packmlProducts, changed)
   } else {
     logger.debug(`No handle defined for ${topic}`)
   }
