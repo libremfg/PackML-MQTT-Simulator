@@ -35,13 +35,14 @@ function EquipmentInterlock() {
   }
 }
 
-function Parameter(index ,productIndex) {
+function Parameter(index, productIndex, ingredientIndex) {
   if (index === undefined || index === null) {
     throw TypeError('Must construct a Parameter with an index')
   }
   return {
     _index: index,
     _productIndex: productIndex !== undefined && productIndex !== null ? productIndex : null,
+    _ingredientIndex: ingredientIndex !== undefined && ingredientIndex !== null ? ingredientIndex : null,
     id: 0,
     name: '',
     unit: '',
@@ -67,8 +68,8 @@ function Product(index) {
     }
     return {
       _index: index,
-      productId: 0,
-      parameter: [],
+      id: 0,
+      processParameter: [],
       ingredient: []
     }
 }
