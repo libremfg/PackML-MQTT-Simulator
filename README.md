@@ -146,10 +146,10 @@ Available Status'
 
 | Topic                                                                        | Values  | Function                                                  |
 |------------------------------------------------------------------------------|---------|-----------------------------------------------------------|
-| `<SITE>/<AREA>/<LINE>/Status/StateCurrent`                                   | String  | Current PackML State                                      |
-| `<SITE>/<AREA>/<LINE>/Status/StateCurrentStr`                                | Integer | Current PackML State as String                            |
-| `<SITE>/<AREA>/<LINE>/Status/UnitMode`                                       | Integer | Current PackML Model                                      |
-| `<SITE>/<AREA>/<LINE>/Status/UnitModeStr`                                    | String  | Current PackML Model as String                            |
+| `<SITE>/<AREA>/<LINE>/Status/StateCurrent`                                   | Integer | Current PackML State                                      |
+| `<SITE>/<AREA>/<LINE>/Status/StateCurrentStr`                                | String  | Current PackML State as string                            |
+| `<SITE>/<AREA>/<LINE>/Status/UnitMode`                                       | Integer | Current PackML Mode                                       |
+| `<SITE>/<AREA>/<LINE>/Status/UnitModeStr`                                    | String  | Current PackML Mode as String                             |
 | `<SITE>/<AREA>/<LINE>/Status/CurMachSpeed`                                   | Decimal | Current Machine Speed                                     |
 | `<SITE>/<AREA>/<LINE>/Status/MachSpeed`                                      | Decimal | Current Machine Speed Setpoint                            |
 | `<SITE>/<AREA>/<LINE>/Status/Parameter/*n*/ID`                               | Integer | Parameter *n* ID                                          |
@@ -173,7 +173,7 @@ Available Admin Status
 
 | Topic                                                        | Values  | Function                                                  |
 |--------------------------------------------------------------|---------|-----------------------------------------------------------|
-| `<SITE>/<AREA>/<LINE>/Admin/MachDesignSpeed`                 | String  | Current PackML State                                      |
+| `<SITE>/<AREA>/<LINE>/Admin/MachDesignSpeed`                 | Decimal | Machine Maximum Design Speed                              |
 | `<SITE>/<AREA>/<LINE>/Admin/ProdConsumedCount/*i*/ID`        | String  | Consumed Counter ID                                       |
 | `<SITE>/<AREA>/<LINE>/Admin/ProdConsumedCount/*i*/Name`      | String  | Consumed Counter Name                                     |
 | `<SITE>/<AREA>/<LINE>/Admin/ProdConsumedCount/*i*/Unit`      | String  | Consumed Counter Units                                    |
