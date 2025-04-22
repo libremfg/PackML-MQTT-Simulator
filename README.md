@@ -299,6 +299,20 @@ For any issue, there are fundamentally three ways an individual can contribute:
 
 ## Changelog
 
+- 2.1.0
+  - Add configuration option for MQTT server port
+  - Add timestamp to metric for alignment to Sparkplug 3.0.0 Specification
+  - Change mqtt library to v5.11.0
+  - Change sonarqube-scanner to v4.3.0
+  - Change winston to v3.17.0
+
+- 2.0.7 
+  - Fix mode command raw byte to string conversion
+  - Fix packml command reference and call arguments
+  - Fix packml product commands to align with README
+  - Fix Product constructor error message typo
+  - Fix product proxy reflecting value change
+
 - 2.0.6
   - Fix host reference on shutdown
   - Change to GitHub Container Registry
