@@ -18,6 +18,9 @@ class Client extends events.EventEmitter {
             clientId: globalConfig.MQTT_CLIENT_ID,
             version: 'spBv1.0',
         };
+        const port = globalConfig.MQTT_PORT ? globalConfig.MQTT_PORT : 1883
+        if (port) this._config.serverUrl = `${this._config.serverUrl}:${port}`
+
         this._globalConfig = globalConfig
         this._defaultPublishOptions = {
             compress: false
@@ -85,16 +88,19 @@ class Client extends events.EventEmitter {
     }
 
     birthDevice() {
+        const timestamp = new Date().valueOf();
         const payload = {
-            timestamp: new Date().valueOf(),
+            timestamp: timestamp,
             metrics: Object.keys(this._deviceData).map((key) => {
                 return {
+                    timestamp: timestamp,
                     name: key,
                     value: this._deviceData[key],
                     type: this.getType(this._deviceData[key])
                 }
             })
         }
+
         this.client.publishDeviceBirth(this.deviceId, payload, this._defaultPublishOptions)
     }
     
@@ -129,6 +135,7 @@ class Client extends events.EventEmitter {
                 }
             ]
         }
+
         this.client.publishNodeBirth(payload, this._defaultPublishOptions)
     }
 
@@ -143,10 +150,12 @@ class Client extends events.EventEmitter {
         }
         
         let convertTopic = topic.replace(this._globalConfig.topicPrefix+'/', '')
+        const timestamp = new Date().valueOf();
         const payload = {
-            timestamp: new Date().valueOf(),
+            timestamp: timestamp,
             metrics: [
                 {
+                    timestamp: timestamp,
                     name: convertTopic,
                     value: message,
                     type: messageType
@@ -175,7 +184,6 @@ class Client extends events.EventEmitter {
     options() {
         return {
             href: this._config.serverUrl,
-            port: this._config.port ? this._config.port : 1883
         };
     }
 }

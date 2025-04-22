@@ -122,7 +122,8 @@ switch (global.config.CLIENT_TYPE) {
 }
 
 client.on('connect', (packet) => {
-  logger.info(`Connected to ${client.options().href || client.options().host || global.config.MQTT_URL}:${client.options().port}`)
+  const port = client.options().port ? `:${client.options().port}` : ''
+  logger.info(`Connected to ${client.options().href || client.options().host || global.config.MQTT_URL}${port}`)
   state.observe('onEnterState', (lifecycle) => {
     const stateCurrent = helper.titleCase(lifecycle.to)
     logger.debug(`Entering State ${stateCurrent}`)
