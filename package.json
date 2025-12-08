@@ -1,6 +1,6 @@
 {
   "name": "packaging-machine-language-mqtt-simulator",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Manufacturing line simulator interfaced using PackML over MQTT.",
   "keywords": [
     "packml",
@@ -28,10 +28,10 @@
   "license": "MIT",
   "dependencies": {
     "javascript-state-machine": "^3.1.0",
-    "mqtt": "^5.11.0",
+    "mqtt": "^5.14.1",
     "seedrandom": "^3.0.5",
     "sparkplug-client": "^3.2.4",
-    "winston": "^3.17.0"
+    "winston": "^3.19.0"
   },
   "devDependencies": {
     "sonarqube-scanner": "^4.3.0",
