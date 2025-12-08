@@ -299,6 +299,12 @@ For any issue, there are fundamentally three ways an individual can contribute:
 
 ## Changelog
 
+- 2.1.1
+  - Change nodejs to v24
+  - Change mqtt library to v5.14.1
+  - Change winston library to 3.19.0
+  - Bump Revision
+
 - 2.1.0
   - Add configuration option for MQTT server port
   - Add timestamp to metric for alignment to Sparkplug 3.0.0 Specification
